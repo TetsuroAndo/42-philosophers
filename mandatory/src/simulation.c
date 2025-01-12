@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   simulation.c                                       :+:      :+:    :+:   */
@@ -6,9 +6,9 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 18:35:29 by teando            #+#    #+#             */
-/*   Updated: 2024/12/11 19:19:07 by teando           ###   ########.fr       */
+/*   Updated: 2025/01/12 19:56:28 by teando           ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "philo.h"
 
@@ -39,19 +39,16 @@ int	start_simulation(t_data *data)
 
 	i = -1;
 	data->start_time = get_time();
-	// スレッド作成
-	while (++i < data->num_philos)
+	while (++i < data->num_philos) // スレッド作成
 	{
 		if (pthread_create(&data->philos[i].thread_id, NULL, philo_routine,
 				&data->philos[i]) != 0)
 			return (1);
 	}
-	// 死亡監視スレッド
-	if (pthread_create(&monitor_tid, NULL, monitor_death, data) != 0)
+	if (pthread_create(&monitor_tid, NULL, monitor_death, data) != 0) // 死亡監視スレッド
 		return (1);
-	// スレッド結合
 	i = -1;
-	while (++i < data->num_philos)
+	while (++i < data->num_philos) // スレッド結合
 		pthread_join(data->philos[i].thread_id, NULL);
 	pthread_join(monitor_tid, NULL);
 	return (0);
