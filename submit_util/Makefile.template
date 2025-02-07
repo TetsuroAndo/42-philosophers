@@ -1,4 +1,4 @@
-#******************************************************************************#
+# **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile.template                                  :+:      :+:    :+:    #
@@ -6,28 +6,35 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/11 19:04:06 by teando            #+#    #+#              #
-#    Updated: 2025/01/12 19:53:50 by teando           ###   ########.fr        #
+#    Updated: 2025/02/08 00:11:03 by teando           ###   ########.fr        #
 #                                                                              #
-#******************************************************************************#
+# **************************************************************************** #
 
-NAME = philo
-CC = cc
-CFLAGS = -Wall -Wextra -Werror
-SRCS = 
-OBJS = $(SRCS:.c=.o)
+NAME		:= philo
+CC			:= cc
+CFLAGS		:= -Wall -Wextra -Werror
+RM          := rm -rf
+ROOT_DIR    := .
+
+SRCS        := $(addprefix $(ROOT_DIR)/, \
+					\
+				)
+OBJS        := $(addprefix $(OUT_DIR)/, $(SRCS:.c=.o))
+DEPS        := $(OBJS:.o=.d)
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -pthread $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) -pthread $(OBJS) -o $@
 
-%.o: %.c philo.h
-	$(CC) $(CFLAGS) -c $< -o $@
+$(OUT_DIR)/%.o: $(ROOT_DIR)/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -MMD -MP $(IDFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS)
+	$(RM) $(OUT_DIR)
 
 fclean: clean
-	rm -f $(NAME)
+	$(RM) $(NAME)
 
 re: fclean all
