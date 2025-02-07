@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 18:35:21 by teando            #+#    #+#             */
-/*   Updated: 2025/02/07 23:03:06 by teando           ###   ########.fr       */
+/*   Updated: 2025/02/07 23:49:05 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ static long	ft_atol(const char *nptr)
 */
 int	init_info(t_info *info, int argc, char **argv)
 {
+	int	i;
+
 	memset(info, 0, sizeof(t_info));
 	info->nb_philo = (int)ft_atol(argv[1]);
 	info->time_to_die = ft_atol(argv[2]);
@@ -62,15 +64,13 @@ int	init_info(t_info *info, int argc, char **argv)
 		|| info->time_to_sleep <= 0)
 		return (1);
 	info->is_finished = 0;
-	info->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
-			* info->nb_philo);
+	info->forks = malloc(sizeof(pthread_mutex_t) * info->nb_philo);
 	if (!info->forks)
 		return (1);
-	for (int i = 0; i < info->nb_philo; i++)
-	{
+	i = -1;
+	while (++i < info->nb_philo)
 		if (pthread_mutex_init(&info->forks[i], NULL) != 0)
 			return (1);
-	}
 	if (pthread_mutex_init(&info->print_lock, NULL) != 0)
 		return (1);
 	info->start_time = get_time_ms();
@@ -82,10 +82,13 @@ int	init_info(t_info *info, int argc, char **argv)
 */
 int	init_philos(t_philo **philos, t_info *info)
 {
+	int	i;
+
 	*philos = (t_philo *)malloc(sizeof(t_philo) * info->nb_philo);
 	if (!*philos)
 		return (1);
-	for (int i = 0; i < info->nb_philo; i++)
+	i = -1;
+	while (++i < info->nb_philo)
 	{
 		(*philos)[i].id = i + 1;
 		(*philos)[i].eat_count = 0;
@@ -107,14 +110,17 @@ int	init_philos(t_philo **philos, t_info *info)
 void	start_simulation(t_philo *philos, t_info *info)
 {
 	pthread_t	mon_thread;
+	int			i;
 
 	/* 哲学者スレッド作成 */
-	for (int i = 0; i < info->nb_philo; i++)
+	i = -1;
+	while (++i < info->nb_philo)
 		pthread_create(&philos[i].thread_id, NULL, routine, &philos[i]);
 	/* 監視スレッド作成（哲学者の生存状態をチェック） */
 	pthread_create(&mon_thread, NULL, monitor, (void *)philos);
 	/* スレッドの終了待ち */
-	for (int i = 0; i < info->nb_philo; i++)
+	i = -1;
+	while (++i < info->nb_philo)
 		pthread_join(philos[i].thread_id, NULL);
 	/* 監視スレッド強制終了（または join）*/
 	pthread_detach(mon_thread);

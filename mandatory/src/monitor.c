@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 19:03:28 by teando            #+#    #+#             */
-/*   Updated: 2025/02/07 22:57:43 by teando           ###   ########.fr       */
+/*   Updated: 2025/02/08 00:00:11 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	*monitor(void *arg)
 			info->is_finished = 1;
 			break ;
 		}
-		usleep(1000);
+		// usleep(1000);
 	}
 	return (NULL);
 }

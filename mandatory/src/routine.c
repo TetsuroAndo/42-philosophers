@@ -1,16 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   actions.c                                          :+:      :+:    :+:   */
+/*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 19:03:46 by teando            #+#    #+#             */
-/*   Updated: 2025/02/07 22:57:24 by teando           ###   ########.fr       */
+/*   Updated: 2025/02/07 23:56:19 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static void	one_philo_must_die(t_philo *philo)
+{
+	print_state(philo, "has taken a fork");
+	usleep(philo->info->time_to_die * 1000);
+	print_state(philo, "died");
+	philo->info->is_finished = 1;
+}
 
 /*
 ** フォークを取る (非対称: 偶数IDは右->左、奇数IDは左->右)
@@ -57,12 +65,8 @@ void	*routine(void *arg)
 
 	philo = (t_philo *)arg;
 	if (philo->info->nb_philo == 1)
-	{
-		/* 哲学者が1人の場合はフォーク1本しかないので、すぐ死ぬケース */
-		print_state(philo, "has taken a fork");
-		usleep(philo->info->time_to_die * 1000);
-		print_state(philo, "died");
-		philo->info->is_finished = 1;
+	{ /* 哲学者が1人の場合はフォーク1本しかないので、すぐ死ぬケース */
+		one_philo_must_die(philo);
 		return (NULL);
 	}
 	while (!philo->info->is_finished)

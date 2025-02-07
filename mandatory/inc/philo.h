@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 22:53:35 by teando            #+#    #+#             */
-/*   Updated: 2025/02/07 22:54:00 by teando           ###   ########.fr       */
+/*   Updated: 2025/02/07 23:47:31 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,11 @@ typedef struct s_info
 
 typedef struct s_philo
 {
-	int id;             // 哲学者ID (1~n)
-	int eat_count;      // 食事回数
-	long last_eat_time; // 最後に食べた時刻
-
-	int left_fork;  // 左フォークのインデックス
-	int right_fork; // 右フォークのインデックス
-
+	int id;              // 哲学者ID (1~n)
+	int eat_count;       // 食事回数
+	long last_eat_time;  // 最後に食べた時刻
+	int left_fork;       // 左フォークのインデックス
+	int right_fork;      // 右フォークのインデックス
 	t_info *info;        // 共通情報へのポインタ
 	pthread_t thread_id; // スレッドID
 }		t_philo;
