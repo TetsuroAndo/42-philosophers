@@ -6,67 +6,116 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 18:35:21 by teando            #+#    #+#             */
-/*   Updated: 2024/12/11 19:17:42 by teando           ###   ########.fr       */
+/*   Updated: 2025/02/07 23:03:06 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <limits.h>
 
-int	init_data(t_data *data, int ac, char **av)
+/*
+** 数値変換を簡単にするためのatoi (エラー処理は省略)
+*/
+static long	ft_atol(const char *nptr)
 {
-	int	i;
+	unsigned long	cutoff;
+	int				neg;
+	int				tmp;
+	unsigned long	r;
 
-	data->num_philos = ft_atoi(av[1]);
-	data->time_to_die = ft_atoi(av[2]);
-	data->time_to_eat = ft_atoi(av[3]);
-	data->time_to_sleep = ft_atoi(av[4]);
-	data->must_eat_count = -1;
-	if (ac == 6)
-		data->must_eat_count = ft_atoi(av[5]);
-	if (data->num_philos <= 0 || data->time_to_die <= 0
-		|| data->time_to_eat <= 0 || data->time_to_sleep <= 0)
-		return (printf("Invalid arguments\n"), 1);
-	data->died = 0;
-	data->all_ate = 0;
-	data->philos = malloc(sizeof(t_philo) * data->num_philos);
-	if (!data->philos)
-		return (1);
-	data->forks = malloc(sizeof(pthread_mutex_t) * data->num_philos);
-	if (!data->forks)
-		return (1);
-	i = -1;
-	while (++i < data->num_philos)
-		pthread_mutex_init(&data->forks[i], NULL);
-	pthread_mutex_init(&data->print_mutex, NULL);
-	return (pthread_mutex_init(&data->meal_check, NULL), 0);
+	neg = 0;
+	r = 0;
+	while (*nptr == ' ' || (*nptr >= 9 && *nptr <= 13))
+		nptr++;
+	if (*nptr == '+' || *nptr == '-')
+		neg = *nptr++ == '-';
+	cutoff = (unsigned long)LONG_MAX ^ -neg;
+	while (*nptr >= '0' && *nptr <= '9')
+	{
+		r *= 10;
+		tmp = *nptr++ - '0';
+		if (r > cutoff || cutoff - r < (unsigned long)tmp)
+			return (cutoff);
+		r += tmp;
+	}
+	if (neg)
+		return (-r);
+	return (r);
 }
 
-int	init_philos(t_data *data)
+/*
+** 引数をパースしてinfoを初期化
+**
+	- number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]
+*/
+int	init_info(t_info *info, int argc, char **argv)
 {
-	int	i;
-
-	i = -1;
-	while (++i < data->num_philos)
+	memset(info, 0, sizeof(t_info));
+	info->nb_philo = (int)ft_atol(argv[1]);
+	info->time_to_die = ft_atol(argv[2]);
+	info->time_to_eat = ft_atol(argv[3]);
+	info->time_to_sleep = ft_atol(argv[4]);
+	info->must_eat_count = -1;
+	if (argc == 6)
+		info->must_eat_count = (int)ft_atol(argv[5]);
+	if (info->nb_philo <= 0 || info->time_to_die <= 0 || info->time_to_eat <= 0
+		|| info->time_to_sleep <= 0)
+		return (1);
+	info->is_finished = 0;
+	info->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
+			* info->nb_philo);
+	if (!info->forks)
+		return (1);
+	for (int i = 0; i < info->nb_philo; i++)
 	{
-		data->philos[i].id = i + 1;
-		data->philos[i].eaten_meals = 0;
-		data->philos[i].last_meal = 0;
-		data->philos[i].data = data;
-		data->philos[i].left_fork = &data->forks[i];
-		data->philos[i].right_fork = &data->forks[(i + 1) % data->num_philos];
+		if (pthread_mutex_init(&info->forks[i], NULL) != 0)
+			return (1);
+	}
+	if (pthread_mutex_init(&info->print_lock, NULL) != 0)
+		return (1);
+	info->start_time = get_time_ms();
+	return (0);
+}
+
+/*
+** 哲学者配列を確保して初期化
+*/
+int	init_philos(t_philo **philos, t_info *info)
+{
+	*philos = (t_philo *)malloc(sizeof(t_philo) * info->nb_philo);
+	if (!*philos)
+		return (1);
+	for (int i = 0; i < info->nb_philo; i++)
+	{
+		(*philos)[i].id = i + 1;
+		(*philos)[i].eat_count = 0;
+		(*philos)[i].last_eat_time = info->start_time;
+		(*philos)[i].info = info;
+		/*
+		** 左右のフォークを設定
+		** 通常: left = i, right = (i+1) % nb_philo
+		*/
+		(*philos)[i].left_fork = i;
+		(*philos)[i].right_fork = (i + 1) % info->nb_philo;
 	}
 	return (0);
 }
 
-void	clean_up(t_data *data)
+/*
+** スレッドを生成 & 監視スレッドを起動し、シミュレーションを開始
+*/
+void	start_simulation(t_philo *philos, t_info *info)
 {
-	int	i;
+	pthread_t	mon_thread;
 
-	i = -1;
-	while (++i < data->num_philos)
-		pthread_mutex_destroy(&data->forks[i]);
-	pthread_mutex_destroy(&data->print_mutex);
-	pthread_mutex_destroy(&data->meal_check);
-	free(data->philos);
-	free(data->forks);
+	/* 哲学者スレッド作成 */
+	for (int i = 0; i < info->nb_philo; i++)
+		pthread_create(&philos[i].thread_id, NULL, routine, &philos[i]);
+	/* 監視スレッド作成（哲学者の生存状態をチェック） */
+	pthread_create(&mon_thread, NULL, monitor, (void *)philos);
+	/* スレッドの終了待ち */
+	for (int i = 0; i < info->nb_philo; i++)
+		pthread_join(philos[i].thread_id, NULL);
+	/* 監視スレッド強制終了（または join）*/
+	pthread_detach(mon_thread);
 }

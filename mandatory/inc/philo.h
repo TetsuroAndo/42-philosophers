@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 19:06:12 by teando            #+#    #+#             */
-/*   Updated: 2024/12/14 11:56:43 by teando           ###   ########.fr       */
+/*   Created: 2025/02/07 22:53:35 by teando            #+#    #+#             */
+/*   Updated: 2025/02/07 22:54:00 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,58 +16,61 @@
 # include <pthread.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
 
-typedef struct s_philo	t_philo;
-typedef struct s_data	t_data;
+/*
+** データ構造定義
+*/
 
-typedef struct s_data
+typedef struct s_info
 {
-	int					num_philos;
-	long				time_to_die;
-	long				time_to_eat;
-	long				time_to_sleep;
-	int					must_eat_count;
-	int					died;
-	int					all_ate;
-	long				start_time;
-	pthread_mutex_t		*forks;
-	pthread_mutex_t		print_mutex;
-	pthread_mutex_t		meal_check;
-	t_philo				*philos;
-}						t_data;
+	int nb_philo;       // 哲学者の数
+	long time_to_die;   // ミリ秒
+	long time_to_eat;   // ミリ秒
+	long time_to_sleep; // ミリ秒
+	int must_eat_count; // 各哲学者が食べるべき回数（オプション）
+	int is_finished;    // シミュレーション終了フラグ
+
+	pthread_mutex_t *forks;     // フォーク(ミューテックス)を格納する配列
+	pthread_mutex_t print_lock; // ログ出力制御用のミューテックス
+
+	long start_time; // シミュレーション開始時刻（ミリ秒）
+}		t_info;
 
 typedef struct s_philo
 {
-	int					id;
-	int					eaten_meals;
-	long				last_meal;
-	pthread_t			thread_id;
-	t_data				*data;
-	pthread_mutex_t		*left_fork;
-	pthread_mutex_t		*right_fork;
-}						t_philo;
+	int id;             // 哲学者ID (1~n)
+	int eat_count;      // 食事回数
+	long last_eat_time; // 最後に食べた時刻
 
-// init.c
-int						init_data(t_data *data, int ac, char **av);
-int						init_philos(t_data *data);
-void					clean_up(t_data *data);
+	int left_fork;  // 左フォークのインデックス
+	int right_fork; // 右フォークのインデックス
 
-// simulation.c
-int						start_simulation(t_data *data);
+	t_info *info;        // 共通情報へのポインタ
+	pthread_t thread_id; // スレッドID
+}		t_philo;
 
-// actions.c
-void					philo_eat(t_philo *philo);
-void					philo_sleep_think(t_philo *philo);
+/* 関数プロトタイプ宣言 */
 
-// monitor.c
-void					*monitor_death(void *arg);
+/* main.c */
+int		print_error(char *msg);
 
-// utils.c
-long					get_time(void);
-void					smart_sleep(long time_in_ms);
-int						ft_atoi(const char *str);
-void					print_action(t_data *data, int id, const char *msg);
+/* init.c */
+int		init_info(t_info *info, int argc, char **argv);
+int		init_philos(t_philo **philos, t_info *info);
+void	start_simulation(t_philo *philos, t_info *info);
+
+/* routine.c */
+void	*routine(void *arg);
+
+/* monitor.c */
+void	*monitor(void *arg);
+
+/* utils.c */
+long	get_time_ms(void);
+void	smart_sleep(long time_in_ms);
+void	print_state(t_philo *philo, char *msg);
 
 #endif

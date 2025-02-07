@@ -6,53 +6,62 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 19:03:28 by teando            #+#    #+#             */
-/*   Updated: 2024/12/11 19:19:56 by teando           ###   ########.fr       */
+/*   Updated: 2025/02/07 22:57:43 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	check_death(t_data *data)
+/*
+** 哲学者の死亡や全員が規定回数食べ終わったかを監視するスレッド
+*/
+static int	all_philos_ate_enough(t_philo *philos)
 {
-	int	done_eat;
-	int	i;
-	int	j;
+	t_info	*info;
+	int		i;
 
-	i = -1;
-	while (++i < data->num_philos && !data->all_ate)
+	info = philos[0].info;
+	if (info->must_eat_count <= 0)
+		return (0);
+	i = 0;
+	while (i < info->nb_philo)
 	{
-		pthread_mutex_lock(&data->meal_check);
-		if ((get_time() - data->philos[i].last_meal) > data->time_to_die)
-		{
-			print_action(data, data->philos[i].id, "died");
-			data->died = 1;
-			pthread_mutex_unlock(&data->meal_check);
-			return ;
-		}
-		if (data->must_eat_count > 0)
-		{
-			done_eat = 0;
-			j = -1;
-			while (++j < data->num_philos)
-			{
-				if (data->philos[j].eaten_meals >= data->must_eat_count)
-					done_eat++;
-			}
-			if (done_eat == data->num_philos)
-				data->all_ate = 1;
-		}
-		pthread_mutex_unlock(&data->meal_check);
+		if (philos[i].eat_count < info->must_eat_count)
+			return (0);
+		i++;
 	}
+	return (1);
 }
 
-void	*monitor_death(void *arg)
+void	*monitor(void *arg)
 {
-	t_data	*data;
+	t_philo	*philos;
+	t_info	*info;
+	int		i;
 
-	data = (t_data *)arg;
-	while (!data->died && !data->all_ate)
+	philos = (t_philo *)arg;
+	info = philos[0].info;
+	while (!info->is_finished)
 	{
-		check_death(data);
+		i = 0;
+		while (i < info->nb_philo && !info->is_finished)
+		{
+			// 最後に食べた時刻 + time_to_die を超えたら死亡
+			if ((get_time_ms() - philos[i].last_eat_time) > info->time_to_die)
+			{
+				print_state(&philos[i], "died");
+				info->is_finished = 1;
+			}
+			i++;
+		}
+		if (info->is_finished)
+			break ;
+		// 全員が十分食べたか
+		if (all_philos_ate_enough(philos))
+		{
+			info->is_finished = 1;
+			break ;
+		}
 		usleep(1000);
 	}
 	return (NULL);
