@@ -6,12 +6,13 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/12 19:37:29 by teando            #+#    #+#              #
-#    Updated: 2025/01/12 19:53:23 by teando           ###   ########.fr        #
+#    Updated: 2025/02/07 20:09:07 by teando           ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
 NAME = philo
 ROOT_DIR = .
+SUBMIT_UTIL_DIR = submit_util
 MANDATORY_DIR = mandatory
 BONUS_DIR = bonus
 SUBMIT_DIR = $(NAME)
@@ -21,16 +22,14 @@ all: mandatory
 mandatory:
 	$(MAKE) -C $(MANDATORY_DIR)
 	mv $(MANDATORY_DIR)/$(NAME) $(ROOT_DIR)
-	$(ROOT_DIR)/$(NAME)
 
 bonus:
 	$(MAKE) -C $(BONUS_DIR)
 	mv $(BONUS_DIR)/$(NAME) $(ROOT_DIR)
-	$(ROOT_DIR)/$(NAME)
 
 submit: fclean
 	mkdir -p $(SUBMIT_DIR)
-	cp submit_util/Makefile.template $(SUBMIT_DIR)/Makefile
+	cp $(SUBMIT_UTIL_DIR)/Makefile.template $(SUBMIT_DIR)/Makefile
 	cp $(MANDATORY_DIR)/src/*.c $(SUBMIT_DIR)/
 	cp $(MANDATORY_DIR)/inc/*.h $(SUBMIT_DIR)/
 	for file in $(BONUS_DIR)/src/*.c; do \
@@ -54,5 +53,9 @@ fclean:
 	rm -rf $(SUBMIT_DIR)
 
 re: fclean all
+
+norm:
+	$(MAKE) -C $(MANDATORY_DIR) norm
+	$(MAKE) -C $(BONUS_DIR) norm
 
 .PHONY: all mandatory bonus submit clean fclean re
