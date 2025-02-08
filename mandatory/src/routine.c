@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 19:03:46 by teando            #+#    #+#             */
-/*   Updated: 2025/02/08 22:15:43 by teando           ###   ########.fr       */
+/*   Updated: 2025/02/09 03:44:05 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,14 @@ static void	take_forks(t_philo *philo)
 	info = philo->info;
 	id_even = (philo->id % 2 == 0);
 	if (id_even)
-	{
+	{ // 偶数ID
 		pthread_mutex_lock(&info->forks[philo->right_fork]);
 		print_state(philo, "has taken a fork");
 		pthread_mutex_lock(&info->forks[philo->left_fork]);
 		print_state(philo, "has taken a fork");
 	}
 	else
-	{
+	{ // 奇数ID
 		pthread_mutex_lock(&info->forks[philo->left_fork]);
 		print_state(philo, "has taken a fork");
 		pthread_mutex_lock(&info->forks[philo->right_fork]);
@@ -86,10 +86,6 @@ void	*routine(void *arg)
 	{
 		/* 考える */
 		print_state(philo, "is thinking");
-		/*
-		** もし「考えている時間」が必要なら以下のようにsleep可
-		** smart_sleep(10); // 例えば10msなど
-		*/
 		/* フォークを取る → 食べる */
 		take_forks(philo);
 		print_state(philo, "is eating");

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 19:03:57 by teando            #+#    #+#             */
-/*   Updated: 2025/02/08 00:02:31 by teando           ###   ########.fr       */
+/*   Updated: 2025/02/09 03:45:09 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@ long	get_time_ms(void)
 /*
 ** usleepのラッパ: ミリ秒単位で分かりやすく呼び出す
 */
-void	smart_sleep(long time_in_ms)
+void	smart_sleep(unsigned int ms)
 {
-	long	start;
+	long long	start;
 
 	start = get_time_ms();
-	while ((get_time_ms() - start) < time_in_ms)
-		usleep(100);
+	while ((get_time_ms() - start) < ms)
+		usleep(10);
 }
 
 /*

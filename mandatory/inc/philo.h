@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 22:53:35 by teando            #+#    #+#             */
-/*   Updated: 2025/02/07 23:47:31 by teando           ###   ########.fr       */
+/*   Updated: 2025/02/09 03:46:58 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	*monitor(void *arg);
 
 /* utils.c */
 long	get_time_ms(void);
-void	smart_sleep(long time_in_ms);
+void	smart_sleep(unsigned int ms);
 void	print_state(t_philo *philo, char *msg);
 
 #endif
