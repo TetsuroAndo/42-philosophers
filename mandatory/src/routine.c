@@ -6,12 +6,16 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 19:03:46 by teando            #+#    #+#             */
-/*   Updated: 2025/02/07 23:56:19 by teando           ###   ########.fr       */
+/*   Updated: 2025/02/08 22:15:43 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+/*
+** 哲学者が一人しかいない場合用の処理
+** → フォークが1本しかなく、time_to_die後に確実に死亡する
+*/
 static void	one_philo_must_die(t_philo *philo)
 {
 	print_state(philo, "has taken a fork");
@@ -46,6 +50,9 @@ static void	take_forks(t_philo *philo)
 	}
 }
 
+/*
+** フォークを置く
+*/
 static void	drop_forks(t_philo *philo)
 {
 	t_info	*info;
@@ -65,23 +72,37 @@ void	*routine(void *arg)
 
 	philo = (t_philo *)arg;
 	if (philo->info->nb_philo == 1)
-	{ /* 哲学者が1人の場合はフォーク1本しかないので、すぐ死ぬケース */
+	{
 		one_philo_must_die(philo);
 		return (NULL);
 	}
+	/*
+	** 衝突を緩和するため、
+	** 偶数IDの哲学者は開始直後に少しだけ待機
+	*/
+	// if (philo->id % 2 == 0)
+	// 	usleep(200);
 	while (!philo->info->is_finished)
 	{
+		/* 考える */
 		print_state(philo, "is thinking");
+		/*
+		** もし「考えている時間」が必要なら以下のようにsleep可
+		** smart_sleep(10); // 例えば10msなど
+		*/
+		/* フォークを取る → 食べる */
 		take_forks(philo);
-		print_state(philo, "is eating"); // 食事
+		print_state(philo, "is eating");
 		philo->last_eat_time = get_time_ms();
 		philo->eat_count++;
 		smart_sleep(philo->info->time_to_eat);
 		drop_forks(philo);
-		if (philo->info->must_eat_count > 0 // 全員必要回数を食べたか判定（オプション）
+		/* 規定回数食べ終わったかチェック (オプション) */
+		if (philo->info->must_eat_count > 0
 			&& philo->eat_count >= philo->info->must_eat_count)
 			break ;
-		print_state(philo, "is sleeping"); // 眠る
+		/* 眠る */
+		print_state(philo, "is sleeping");
 		smart_sleep(philo->info->time_to_sleep);
 	}
 	return (NULL);
