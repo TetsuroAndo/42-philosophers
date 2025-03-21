@@ -31,10 +31,20 @@ long	get_time_ms(void)
 void	smart_sleep(long time_in_ms)
 {
 	long	start;
+	long	elapsed;
 
 	start = get_time_ms();
-	while ((get_time_ms() - start) < time_in_ms)
-		usleep(100);
+	while (1)
+	{
+		elapsed = get_time_ms() - start;
+		if (elapsed >= time_in_ms)
+			break;
+		// 残り時間が10ms以上ならより長く眠る、そうでなければ短く眠る
+		if (time_in_ms - elapsed > 10)
+			usleep(1000);
+		else
+			usleep(50);
+	}
 }
 
 /*
@@ -43,12 +53,18 @@ void	smart_sleep(long time_in_ms)
 void	print_state(t_philo *philo, char *msg)
 {
 	long	timestamp;
+	static int	print_lock_held = 0;
 
-	pthread_mutex_lock(&philo->info->print_lock);
+	// 既にロックを持っている場合はロックしない
+	if (!print_lock_held)
+		pthread_mutex_lock(&philo->info->print_lock);
+	
 	if (!philo->info->is_finished)
 	{
 		timestamp = get_time_ms() - philo->info->start_time;
 		printf("%ld %d %s\n", timestamp, philo->id, msg);
 	}
-	pthread_mutex_unlock(&philo->info->print_lock);
+	
+	if (!print_lock_held)
+		pthread_mutex_unlock(&philo->info->print_lock);
 }

@@ -80,8 +80,8 @@ void	*routine(void *arg)
 	** 衝突を緩和するため、
 	** 偶数IDの哲学者は開始直後に少しだけ待機
 	*/
-	// if (philo->id % 2 == 0)
-	// 	usleep(200);
+	if (philo->id % 2 == 0)
+		usleep(1000); // 1ミリ秒待機に増加
 	while (!philo->info->is_finished)
 	{
 		/* 考える */
@@ -92,9 +92,14 @@ void	*routine(void *arg)
 		*/
 		/* フォークを取る → 食べる */
 		take_forks(philo);
-		print_state(philo, "is eating");
+		
+		// 食事状態の更新をアトミックに行う
+		pthread_mutex_lock(&philo->info->print_lock);
 		philo->last_eat_time = get_time_ms();
 		philo->eat_count++;
+		print_state(philo, "is eating");
+		pthread_mutex_unlock(&philo->info->print_lock);
+		
 		smart_sleep(philo->info->time_to_eat);
 		drop_forks(philo);
 		/* 規定回数食べ終わったかチェック (オプション) */

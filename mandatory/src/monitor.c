@@ -44,6 +44,7 @@ void	*monitor(void *arg)
 	t_philo	*philos;
 	t_info	*info;
 	int		i;
+	long	timestamp;
 
 	philos = (t_philo *)arg;
 	info = philos[0].info;
@@ -53,17 +54,28 @@ void	*monitor(void *arg)
 		while (i < info->nb_philo && !info->is_finished)
 		{
 			// 最後に食べてからtime_to_dieを超えたら死亡
-			if ((get_time_ms() - philos[i].last_eat_time) > info->time_to_die)
+			long current_time = get_time_ms();
+			long time_since_last_meal = current_time - philos[i].last_eat_time;
+			
+			if (time_since_last_meal > info->time_to_die)
 			{
-				print_state(&philos[i], "died");
-				info->is_finished = 1;
+				// 原子的に状態を更新
+				pthread_mutex_lock(&info->print_lock);
+				if (!info->is_finished)
+				{
+					info->is_finished = 1;
+					timestamp = current_time - info->start_time;
+					printf("%ld %d died\n", timestamp, philos[i].id);
+				}
+				pthread_mutex_unlock(&info->print_lock);
 			}
 			i++;
 		}
 		// 全員が十分食べたか
 		if (!info->is_finished && all_philos_ate_enough(philos))
 			info->is_finished = 1;
-		usleep(1000);
+		// モニタリング頻度を上げる
+		usleep(500);
 	}
 	return (NULL);
 }

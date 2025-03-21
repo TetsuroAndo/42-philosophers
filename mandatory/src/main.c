@@ -6,35 +6,35 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 18:35:15 by teando            #+#    #+#             */
-/*   Updated: 2025/02/07 23:11:04 by teando           ###   ########.fr       */
+/*   Updated: 2025/03/21 22:20:35 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	usage(void)
+static int usage(void)
 {
 	printf("Usage: ./philo <num_of_philos> <time_to_die> <time_to_eat> "
-			"<time_to_sleep> [num_of_must_eat]\n\n");
+		   "<time_to_sleep> [num_of_must_eat]\n\n");
 	printf("num_of_philos       number of philosophers and nunber of forks\n");
 	printf("time_to_die [ms]    the time in when they must start eating\n");
 	printf("time_to_eat [ms]    the time it takes them to eat\n");
 	printf("time_to_sleep [ms]  the amount of sleep they need\n");
 	printf("num_of_must_eat     number of times each philosopher must eat\n");
-	return (1);
+	return (EXIT_FAILURE);
 }
 
-int	print_error(char *msg)
+int print_error(char *msg)
 {
 	printf("Error: %s\n", msg);
-	return (1);
+	return (EXIT_FAILURE);
 }
 
-int	main(int ac, char **av)
+int main(int ac, char **av)
 {
-	t_info	info;
-	t_philo	*philos;
-	int		i;
+	t_info info;
+	t_philo *philos;
+	int i;
 
 	if (ac < 5 || ac > 6)
 		return (usage());
@@ -59,4 +59,5 @@ int	main(int ac, char **av)
 	pthread_mutex_destroy(&info.print_lock);
 	free(info.forks);
 	free(philos);
+	return (EXIT_SUCCESS);
 }
