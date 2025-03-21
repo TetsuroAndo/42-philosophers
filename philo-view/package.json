@@ -1,0 +1,14 @@
+{
+  "name": "philo-view",
+  "version": "1.0.0",
+  "description": "哲学者の食事問題ビジュアライザー",
+  "main": "philo-server.js",
+  "scripts": {
+    "start": "node philo-server.js"
+  },
+  "author": "teando@student.42tokyo.jp",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

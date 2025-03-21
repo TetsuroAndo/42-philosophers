@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哲学者の食事 - Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>哲学者の食事問題 - ビジュアライザー</h1>
+        <div id="control-panel">
+            <div class="form-group">
+                <label for="philo-count">哲学者の数:</label>
+                <input type="number" id="philo-count" min="1" max="200" value="5">
+            </div>
+            <div class="form-group">
+                <label for="time-to-die">死亡まで (ms):</label>
+                <input type="number" id="time-to-die" min="60" value="800">
+            </div>
+            <div class="form-group">
+                <label for="time-to-eat">食事時間 (ms):</label>
+                <input type="number" id="time-to-eat" min="60" value="200">
+            </div>
+            <div class="form-group">
+                <label for="time-to-sleep">睡眠時間 (ms):</label>
+                <input type="number" id="time-to-sleep" min="60" value="200">
+            </div>
+            <div class="form-group">
+                <label for="must-eat-count">食事回数:</label>
+                <input type="number" id="must-eat-count" min="0" value="0">
+                <span class="hint">(0 = 無制限)</span>
+            </div>
+            <div class="button-group">
+                <button id="start-btn" class="primary-btn">開始</button>
+                <button id="stop-btn" class="danger-btn" disabled>停止</button>
+                <button id="reset-btn" class="secondary-btn">リセット</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div id="time-display">
+            <span>経過時間: <span id="elapsed-time">0</span> ms</span>
+        </div>
+
+        <div id="visualization-container">
+            <div id="table-container">
+                <div id="table"></div>
+                <div id="philosophers-container"></div>
+            </div>
+        </div>
+
+        <div id="status-panel">
+            <h2>状態タイムライン</h2>
+            <div id="timeline-container">
+                <div id="timeline-header"></div>
+                <div id="timeline-content">
+                    <div id="timeline-timestamps"></div>
+                    <div id="timeline-rows"></div>
+                </div>
+            </div>
+            <div id="log-container"></div>
+        </div>
+    </main>
+
+    <footer>
+        <p>©2025 by teando@student.42tokyo.jp</p>
+    </footer>
+
+    <script src="visualizer.js"></script>
+</body>
+</html>
