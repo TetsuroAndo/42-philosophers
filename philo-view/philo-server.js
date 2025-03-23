@@ -23,18 +23,25 @@ app.post('/api/run-philo', (req, res) => {
         args.push(mustEatCount);
     }
     
-    // ../mandatory/philo を実行
-    const philoProcess = spawn('../mandatory/philo', args);
+    // philoを実行
+    const philoPath = path.join(__dirname, '../mandatory/philo');
+    console.log('Executing philo at:', philoPath, 'with args:', args);
+    const philoProcess = spawn(philoPath, args);
+    console.log('Philo process started');
     
     let output = '';
     let errorOutput = '';
     
     philoProcess.stdout.on('data', (data) => {
-        output += data.toString();
+        const str = data.toString();
+        console.log(str);
+        output += str;
     });
     
     philoProcess.stderr.on('data', (data) => {
-        errorOutput += data.toString();
+        const str = data.toString();
+        console.error(str);
+        errorOutput += str;
     });
     
     philoProcess.on('close', (code) => {
