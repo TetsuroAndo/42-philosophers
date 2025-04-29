@@ -6,18 +6,17 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/07 19:56:42 by teando            #+#    #+#              #
-#    Updated: 2025/04/30 07:48:25 by teando           ###   ########.fr        #
+#    Updated: 2025/04/30 08:14:29 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME        := philo
 CC          := cc
-CFLAGS      := -Wall -Wextra -Werror -g -fsanitize=address -O1 -fno-omit-frame-pointer
+CFLAGS      := -Wall -Wextra -Werror -O3 -march=native -funroll-loops
 RM          := rm -rf
 ROOT_DIR    := .
 OUT_DIR     := $(ROOT_DIR)/objs
 INCS_DIR    := $(ROOT_DIR)/src
-
 IDFLAGS     := -I$(INCS_DIR)
 
 SRCS        := $(shell find src -name "*.c")

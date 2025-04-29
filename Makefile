@@ -1,4 +1,4 @@
-#******************************************************************************#
+# **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
@@ -6,16 +6,16 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/12 19:37:29 by teando            #+#    #+#              #
-#    Updated: 2025/02/07 20:09:07 by teando           ###   ########.fr        #
+#    Updated: 2025/04/30 08:19:41 by teando           ###   ########.fr        #
 #                                                                              #
-#******************************************************************************#
+# **************************************************************************** #
 
-NAME = philo
-ROOT_DIR = .
-SUBMIT_UTIL_DIR = submit_util
-MANDATORY_DIR = mandatory
-BONUS_DIR = bonus
-SUBMIT_DIR = $(NAME)
+NAME 			:= philo
+ROOT_DIR 		:= .
+RM				:= rm -rf
+MANDATORY_DIR 	:= $(ROOT_DIR)/mandatory
+BONUS_DIR 		:= $(ROOT_DIR)/bonus
+SUBMIT_DIR 		:= $(ROOT_DIR)/$(NAME)
 
 all: mandatory
 
@@ -29,14 +29,14 @@ bonus:
 
 submit: fclean
 	mkdir -p $(SUBMIT_DIR)
-	cp $(SUBMIT_UTIL_DIR)/Makefile.template $(SUBMIT_DIR)/Makefile
+	cp $(MANDATORY_DIR)/Makefile $(SUBMIT_DIR)/Makefile
 	cp $(MANDATORY_DIR)/src/*.c $(SUBMIT_DIR)/
-	cp $(MANDATORY_DIR)/inc/*.h $(SUBMIT_DIR)/
+	cp $(MANDATORY_DIR)/src/*.h $(SUBMIT_DIR)/
 	for file in $(BONUS_DIR)/src/*.c; do \
 		filename=$$(basename $$file .c); \
 		cp $$file $(SUBMIT_DIR)/$${filename}_bonus.c; \
 	done
-	for file in $(BONUS_DIR)/inc/*.h; do \
+	for file in $(BONUS_DIR)/src/*.h; do \
 		filename=$$(basename $$file .h); \
 		cp $$file $(SUBMIT_DIR)/$${filename}_bonus.h; \
 	done
@@ -44,13 +44,12 @@ submit: fclean
 clean:
 	$(MAKE) -C $(MANDATORY_DIR) clean
 	$(MAKE) -C $(BONUS_DIR) clean
-	rm -rf $(SUBMIT_DIR)
+	$(RM) $(SUBMIT_DIR)
 
-fclean:
-	rm -f $(ROOT_DIR)/$(NAME)
+fclean: clean
+	$(RM) $(ROOT_DIR)/$(NAME)
 	$(MAKE) -C $(MANDATORY_DIR) fclean
 	$(MAKE) -C $(BONUS_DIR) fclean
-	rm -rf $(SUBMIT_DIR)
 
 re: fclean all
 

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:49:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/30 07:50:05 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/30 08:09:55 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ static inline int	philo_eat(t_philo *p)
 	if (take_forks(p))
 		return (1);
 	put_state(p, "is eating");
-	msleep(p->data->t_eat, p->data);
 	set_last_meal(p, now_ms());
+	msleep(p->data->t_eat, p->data);
 	drop_forks(p);
 	if (p->data->must_eat > 0 && p->eat_count >= p->data->must_eat)
 	{
