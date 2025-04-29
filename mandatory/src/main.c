@@ -23,7 +23,8 @@ static inline int	start_sim(t_data *d)
 	{
 		d->philos[i].last_meal = d->start_ts;
 		if (pthread_create(&d->philos[i].th, NULL, life, &d->philos[i]) == -1)
-			return (set_stop(d), puterr_ret("Failed to create Philosopher thread\n"));
+			return (set_stop(d),
+				puterr_ret("Failed to create Philosopher thread\n"));
 	}
 	if (pthread_create(&ovs, NULL, observer, d) == -1)
 		return (set_stop(d), puterr_ret("Failed to create Observer thread\n"));
@@ -33,7 +34,7 @@ static inline int	start_sim(t_data *d)
 	return (0);
 }
 
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
 	t_data	d;
 

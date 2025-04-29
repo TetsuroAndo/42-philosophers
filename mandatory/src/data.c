@@ -6,37 +6,37 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:43:26 by teando            #+#    #+#             */
-/*   Updated: 2025/04/30 06:06:07 by teando           ###   ########.fr       */
+/*   Updated: 2025/04/30 08:22:40 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static long ft_atol(const char *nptr)
+static long	ft_atol(const char *nptr)
 {
-    unsigned long cutoff;
-    int neg;
-    int tmp;
-    unsigned long res;
+	unsigned long	cutoff;
+	int				neg;
+	int				tmp;
+	unsigned long	res;
 
-    neg = 0;
-    res = 0;
-    while (*nptr == ' ' || (*nptr >= 9 && *nptr <= 13))
-        nptr++;
-    if (*nptr == '+' || *nptr == '-')
-        neg = *nptr++ == '-';
-    cutoff = (unsigned long)LONG_MAX ^ -neg;
-    while (*nptr >= '0' && *nptr <= '9')
-    {
-        res *= 10;
-        tmp = *nptr++ - '0';
-        if (res > cutoff || cutoff - res < (unsigned long)tmp)
-            return (cutoff);
-        res += tmp;
-    }
-    if (neg)
-        return (-res);
-    return (res);
+	neg = 0;
+	res = 0;
+	while (*nptr == ' ' || (*nptr >= 9 && *nptr <= 13))
+		nptr++;
+	if (*nptr == '+' || *nptr == '-')
+		neg = *nptr++ == '-';
+	cutoff = (unsigned long)LONG_MAX ^ -neg;
+	while (*nptr >= '0' && *nptr <= '9')
+	{
+		res *= 10;
+		tmp = *nptr++ - '0';
+		if (res > cutoff || cutoff - res < (unsigned long)tmp)
+			return (cutoff);
+		res += tmp;
+	}
+	if (neg)
+		return (-res);
+	return (res);
 }
 
 int	parse_args(t_data *d, int ac, char **av)
@@ -48,18 +48,19 @@ int	parse_args(t_data *d, int ac, char **av)
 	d->must_eat = -1;
 	if (ac == 6)
 		d->must_eat = ft_atol(av[5]);
-	if (d->n_philo <= 0 || d->t_die <= 0 || d->t_eat <= 0 || d->t_sleep <= 0)
+	if (d->n_philo <= 0 || d->t_die <= 0 || d->t_eat <= 0 || d->t_sleep <= 0
+		|| d->must_eat < -1)
 		return (1);
-	if (d->n_philo > INT_MAX || d->t_die > INT_MAX || d->t_eat > INT_MAX 
+	if (d->n_philo > INT_MAX || d->t_die > INT_MAX || d->t_eat > INT_MAX
 		|| d->t_sleep > INT_MAX || d->must_eat > INT_MAX)
 		return (1);
 	return (0);
 }
 
-static int create_philos(t_philo **philos, t_data *d)
+static int	create_philos(t_philo **philos, t_data *d)
 {
 	long	i;
-	
+
 	d->philos = malloc(sizeof(t_philo) * d->n_philo);
 	if (!d->philos)
 		return (1);
@@ -110,7 +111,7 @@ int	init_data(t_data *d)
 		}
 	}
 	if (create_philos(&d->philos, d))
-		return (free(d->forks),1);
+		return (free(d->forks), 1);
 	return (0);
 }
 

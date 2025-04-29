@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-static inline void set_last_meal(t_philo *p, long ts)
+static inline void	set_last_meal(t_philo *p, long ts)
 {
 	pthread_mutex_lock(&p->meal_mtx);
 	p->last_meal = ts;

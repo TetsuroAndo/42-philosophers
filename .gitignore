@@ -2,6 +2,7 @@
 .vscode
 out
 obj
+objs
 philosophers
 philo
 playground

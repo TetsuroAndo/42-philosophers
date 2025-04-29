@@ -22,31 +22,29 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-int puterr(const char *s)
+int	puterr(const char *s)
 {
-	if (write (STDERR_FILENO, s, ft_strlen(s)) == -1)
+	if (write(STDERR_FILENO, s, ft_strlen(s)) == -1)
 		return (-1);
 	return (0);
 }
 
-int usage(void)
+int	usage(void)
 {
-    puterr("Usage: ./philo <num_philos> <time_die> <time_eat> "
-           "<time_sleep> [num_must_eat]\n\n");
-    puterr("num_philos       number of philosophers and nunber of forks\n");
-    puterr("time_die [ms]    the time in when they must start eating\n");
-    puterr("time_eat [ms]    the time it takes them to eat\n");
-    puterr("time_sleep [ms]  the amount of sleep they need\n");
-    puterr("num_must_eat     number of times each philosopher must eat\n");
-    return (EXIT_FAILURE);
+	puterr("Usage: ./philo <num_philos> <time_die> <time_eat> "
+			"<time_sleep> [num_must_eat]\n\n");
+	puterr("num_philos       number of philosophers and nunber of forks\n");
+	puterr("time_die [ms]    the time in when they must start eating\n");
+	puterr("time_eat [ms]    the time it takes them to eat\n");
+	puterr("time_sleep [ms]  the amount of sleep they need\n");
+	puterr("num_must_eat     number of times each philosopher must eat\n");
+	return (EXIT_FAILURE);
 }
 
-int puterr_ret(char *msg)
+int	puterr_ret(char *msg)
 {
-    puterr("Error: ");
-    puterr(msg);
-    puterr("\n");
-    return (EXIT_FAILURE);
+	puterr("Error: ");
+	puterr(msg);
+	puterr("\n");
+	return (EXIT_FAILURE);
 }
-
-

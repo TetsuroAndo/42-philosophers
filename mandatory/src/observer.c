@@ -59,9 +59,9 @@ static inline int	watch_alive(t_data *d)
 	return (0);
 }
 
-void *observer(void *arg)
+void	*observer(void *arg)
 {
-	t_data *d;
+	t_data	*d;
 
 	d = (t_data *)arg;
 	while (!d->stop)
