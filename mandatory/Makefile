@@ -6,27 +6,36 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/07 19:56:42 by teando            #+#    #+#              #
-#    Updated: 2025/04/30 08:14:29 by teando           ###   ########.fr        #
+#    Updated: 2025/04/30 08:44:53 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME        := philo
+NAME_BONUS  := philo_bonus
 CC          := cc
 CFLAGS      := -Wall -Wextra -Werror -O3 -march=native -funroll-loops
 RM          := rm -rf
 ROOT_DIR    := .
-OUT_DIR     := $(ROOT_DIR)/objs
+OUT_DIR     := $(ROOT_DIR)/obj
 INCS_DIR    := $(ROOT_DIR)/src
 IDFLAGS     := -I$(INCS_DIR)
 
-SRCS        := $(shell find src -name "*.c")
+SRCS        := $(shell find . -name "*.c" -not -name "*_bonus.c")
+SRCS_BONUS  := $(shell find . -name "*_bonus.c")
 OBJS        := $(addprefix $(OUT_DIR)/, $(SRCS:.c=.o))
+OBJS_BONUS  := $(addprefix $(OUT_DIR)/, $(SRCS_BONUS:.c=.o))
 DEPS        := $(OBJS:.o=.d)
+DEPS_BONUS  := $(OBJS_BONUS:.o=.d)
 
 all: $(NAME)
 
+bonus: $(NAME_BONUS)
+
 $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) -pthread $(OBJS) -o $@
+
+$(NAME_BONUS): $(OBJS_BONUS)
+	$(CC) $(CFLAGS) -pthread $(OBJS_BONUS) -o $@
 
 $(OUT_DIR)/%.o: $(ROOT_DIR)/%.c
 	@mkdir -p $(@D)
