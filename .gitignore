@@ -4,6 +4,7 @@ out
 obj
 philosophers
 philo
+playground
 
 # tester
 LazyPhilosophersTester/
