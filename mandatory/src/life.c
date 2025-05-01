@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:49:40 by teando            #+#    #+#             */
-/*   Updated: 2025/04/30 08:09:55 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/01 13:08:41 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ void	*life(void *arg)
 	t_philo	*p;
 
 	p = (t_philo *)arg;
+	while (p->data->start_ts == 0)
+		usleep(10);
 	while (now_ms() < p->data->start_ts)
 		usleep(10);
 	while (!check_stop(p->data))

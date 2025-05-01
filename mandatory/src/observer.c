@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:46:34 by teando            #+#    #+#             */
-/*   Updated: 2025/04/30 07:43:01 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/01 13:12:31 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,39 @@ static inline int	watch_alive(t_data *d)
 	return (0);
 }
 
+static inline int	watch_creation(t_data *d)
+{
+	long	i;
+
+	while (1)
+	{
+		i = -1;
+		while (++i < d->n_philo)
+		{
+			if (d->philos[i].th == 0)
+				break;
+		}
+		if (i == d->n_philo)
+			break;
+		usleep(10);
+	}
+	d->start_ts = now_ms() + 100;
+	i = -1;
+	while (++i < d->n_philo)
+		d->philos[i].last_meal = d->start_ts;
+	return (0);
+}
+
 void	*observer(void *arg)
 {
 	t_data	*d;
 
 	d = (t_data *)arg;
-	while (!d->stop)
+	if (watch_creation(d))
+		return (NULL);
+	while (now_ms() < d->start_ts)
+		usleep(10);
+	while (!check_stop(d))
 	{
 		if (watch_dead(d))
 			break ;
