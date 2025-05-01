@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 14:51:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 07:48:36 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 07:59:52 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,6 @@ void	*ph_guardian(void *arg)
 
 static inline void	eat(t_ctx *c, t_philo *self)
 {
-	long	must_eat;
-
-	must_eat = c->cf.must_eat;
-	if (must_eat >= 0 && self->eat_count >= must_eat)
-		exit(0);
 	sem_wait(c->sem.dining_sem);
 	sem_wait(c->sem.forks_sem);
 	put_state(c, self->id, "has taken a fork");
@@ -62,6 +57,8 @@ static inline void	eat(t_ctx *c, t_philo *self)
 	sem_post(c->sem.forks_sem);
 	sem_post(c->sem.forks_sem);
 	sem_post(c->sem.dining_sem);
+	if (c->cf.must_eat >= 0 && self->eat_count >= c->cf.must_eat)
+		exit(0);
 }
 
 void	life(t_ctx *c, t_philo *self)

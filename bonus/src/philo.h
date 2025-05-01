@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 14:51:02 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 07:44:01 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 07:54:07 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,18 @@
 # define PHILO_H
 
 # include <errno.h>
+# include <fcntl.h>
 # include <limits.h>
 # include <pthread.h>
-# include <signal.h>
 # include <semaphore.h>
+# include <signal.h>
 # include <stddef.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/time.h>
 # include <sys/types.h>
+# include <sys/wait.h>
 # include <unistd.h>
 
 typedef struct s_philo

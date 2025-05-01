@@ -61,8 +61,8 @@ int	parse_args(t_cfg *cf, int ac, char **av)
 
 int	init_data(t_ctx *c, pid_t **pids)
 {
-	int	 philos;
-	int  dining;
+	int	philos;
+	int	dining;
 
 	sem_unlink_all(&c->sem);
 	philos = c->cf.n_philo;
@@ -70,7 +70,8 @@ int	init_data(t_ctx *c, pid_t **pids)
 	c->sem.forks_sem = sem_open(c->sem.fn, O_CREAT | O_EXCL, 0600, philos);
 	c->sem.print_sem = sem_open(c->sem.pn, O_CREAT | O_EXCL, 0600, 1);
 	c->sem.dining_sem = sem_open(c->sem.dn, O_CREAT | O_EXCL, 0600, dining);
-	if (c->sem.forks_sem == SEM_FAILED || c->sem.print_sem == SEM_FAILED || c->sem.dining_sem == SEM_FAILED)
+	if (c->sem.forks_sem == SEM_FAILED || c->sem.print_sem == SEM_FAILED
+		|| c->sem.dining_sem == SEM_FAILED)
 		return (puterr_ret("sem_open failed"));
 	*pids = malloc(sizeof(pid_t) * philos);
 	if (!*pids)

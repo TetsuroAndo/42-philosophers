@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 00:03:42 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 07:44:18 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 07:55:28 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,7 @@ static inline void	wait_all_childs(t_ctx *c, pid_t *pids)
 		{
 			i = -1;
 			while (++i < c->cf.n_philo)
-			{
 				kill(pids[i], SIGTERM);
-				dprintf(2, "kill: ID:[%ld] PID[%d]\n", i, pids[i]);
-			}
 			break ;
 		}
 	}
@@ -74,12 +71,12 @@ static inline long	creation(t_ctx *c, pid_t *pids)
 
 int	main(int ac, char **av)
 {
-	t_ctx		c;
-	pid_t		*pids;
+	t_ctx	c;
+	pid_t	*pids;
+
 	c.sem.fn = "/forks_sem_perm";
 	c.sem.pn = "/print_sem_perm";
 	c.sem.dn = "/dining_sem_perm";
-
 	if (parse_args(&c.cf, ac, av))
 		return (puterr_ret("Bad arguments"));
 	if (init_data(&c, &pids))
