@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 00:03:42 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 08:06:10 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 08:16:02 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static inline long	creation(t_ctx *c, pid_t *pids)
 	{
 		pids[i] = fork();
 		if (pids[i] < 0)
-			puterr_exit("fork");
+			return (puterr_ret("fork"));
 		if (pids[i] == 0)
 			born(c, i + 1);
 	}
