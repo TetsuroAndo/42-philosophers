@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 14:51:02 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 05:54:54 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 06:18:27 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ typedef struct s_cfg
 typedef struct s_ctx
 {
 	long		start_ts;
-	t_cfg		*cf;
+	t_cfg		cf;
 	sem_t		*forks_sem;
 	sem_t		*print_sem;
 	t_philo		*p;

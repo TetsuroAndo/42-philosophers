@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 00:03:42 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 05:55:02 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 06:20:30 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static inline int	wait_all_childs(t_ctx *c, pid_t *pids)
 	long	i;
 
 	finished = 0;
-	while (finished < c->cf->n_philo)
+	while (finished < c->cf.n_philo)
 	{
 		pid = waitpid(-1, &status, 0);
 		if (pid < 0)
@@ -28,7 +28,7 @@ static inline int	wait_all_childs(t_ctx *c, pid_t *pids)
 		if (!WIFEXITED(status) || WEXITSTATUS(status))
 		{
 			i = 0;
-			while (i < c->cf->n_philo)
+			while (i < c->cf.n_philo)
 				kill(pids[i++], SIGTERM);
 		}
 		++finished;
@@ -40,8 +40,8 @@ static inline void	born(t_ctx *c, long id, const char *fn, const char *pn)
 {
 	t_ctx	lc;
 
-	lc.cf = c->cf;
 	lc.start_ts = c->start_ts;
+	lc.cf = c->cf;
 	lc.forks_sem = sem_open(fn, 0);
 	lc.print_sem = sem_open(pn, 0);
 	lc.p = &c->p[id - 1];
@@ -55,19 +55,16 @@ static inline long	creation(t_ctx *c, pid_t *pids, const char *fn,
 {
 	long	i;
 
-	c->start_ts = 0;
+	c->start_ts = now_ms() + 1000;
 	i = -1;
-	while (++i < c->cf->n_philo)
+	while (++i < c->cf.n_philo)
 	{
 		pids[i] = fork();
 		if (pids[i] < 0)
-			exit(puterr_ret("fork"));
+			puterr_exit("fork");
 		if (pids[i] == 0)
 			born(c, i + 1, fn, pn);
 	}
-	c->start_ts = now_ms() + 100;
-	while (--i >= 0)
-		c->p[i].last_meal = c->start_ts;
 	return (0);
 }
 
@@ -78,7 +75,7 @@ int	main(int ac, char **av)
 	const char	*fn = "/forks_sem_perm";
 	const char	*pn = "/print_sem_perm";
 
-	if (parse_args(c.cf, ac, av))
+	if (parse_args(&c.cf, ac, av))
 		return (puterr_ret("Bad arguments"));
 	if (init_data(&c, &pids, fn, pn))
 		return (puterr_ret("Initialize Philosophers failed"));
