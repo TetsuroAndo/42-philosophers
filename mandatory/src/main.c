@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 00:03:42 by teando            #+#    #+#             */
-/*   Updated: 2025/05/01 14:26:41 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/01 14:49:09 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static inline void	set_start_ts(t_data *d)
 static inline long	start_sim(t_data *d)
 {
 	long		i;
-	pthread_t	ovs;
+	pthread_t	obs;
 
 	d->start_ts = 0;
 	i = -1;
@@ -34,10 +34,10 @@ static inline long	start_sim(t_data *d)
 		if (pthread_create(&d->philos[i].th, NULL, life, &d->philos[i]))
 			return (puterr_ret("Failed to create Philosopher thread"));
 	}
-	if (pthread_create(&ovs, NULL, observer, d))
+	if (pthread_create(&obs, NULL, observer, d))
 		return (puterr_ret("Failed to create Observer thread"));
 	set_start_ts(d);
-	pthread_join(ovs, NULL);
+	pthread_join(obs, NULL);
 	while (--i >= 0)
 		pthread_join(d->philos[i].th, NULL);
 	return (0);
