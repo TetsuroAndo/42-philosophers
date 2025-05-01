@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
+/*   "philo_bonus.h"                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 14:51:02 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 08:08:04 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 08:21:33 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
 
 # include <fcntl.h>
 # include <limits.h>
@@ -80,7 +80,7 @@ void			put_state(t_ctx *c, long id, char *msg);
 
 /* err.c */
 int				puterr(const char *s);
-void			usage(void);
+void			usage(char **av);
 int				puterr_ret(char *msg);
 void			puterr_exit(char *msg);
 

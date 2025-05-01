@@ -6,11 +6,11 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/07 19:56:42 by teando            #+#    #+#              #
-#    Updated: 2025/04/30 08:17:04 by teando           ###   ########.fr        #
+#    Updated: 2025/05/02 08:34:18 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME        := philo_bonus
+NAME        := philo
 CC          := cc
 CFLAGS      := -Wall -Wextra -Werror -O3 -march=native -funroll-loops
 RM          := rm -rf

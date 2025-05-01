@@ -6,11 +6,11 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 20:48:30 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 07:54:33 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 08:25:51 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 size_t	ft_strlen(const char *s)
 {
@@ -29,10 +29,14 @@ int	puterr(const char *s)
 	return (0);
 }
 
-void	usage(void)
+void	usage(char **av)
 {
-	puterr("Usage: ./philo <num_philos> <time_die> <time_eat> "
-		"<time_sleep> [num_must_eat]\n\n");
+	puterr("Usage: ");
+	if (av && av[0])
+		puterr(av[0]);
+	else
+		puterr("./philo");
+	puterr(" <num_philos> <time_die> <time_eat> <time_sleep> [num_must_eat]\n\n");
 	puterr("num_philos       number of philosophers and nunber of forks\n");
 	puterr("time_die [ms]    the time in when they must start eating\n");
 	puterr("time_eat [ms]    the time it takes them to eat\n");

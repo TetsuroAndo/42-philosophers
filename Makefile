@@ -6,7 +6,7 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/12 19:37:29 by teando            #+#    #+#              #
-#    Updated: 2025/04/30 08:19:41 by teando           ###   ########.fr        #
+#    Updated: 2025/05/02 08:34:22 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,12 +20,14 @@ SUBMIT_DIR 		:= $(ROOT_DIR)/$(NAME)
 all: mandatory
 
 mandatory:
+	$(RM) $(ROOT_DIR)/$(NAME)
 	$(MAKE) -C $(MANDATORY_DIR)
-	mv $(MANDATORY_DIR)/$(NAME) $(ROOT_DIR)
+	mv $(MANDATORY_DIR)/$(NAME) $(ROOT_DIR)/$(NAME)
 
 bonus:
+	$(RM) $(ROOT_DIR)/$(NAME)
 	$(MAKE) -C $(BONUS_DIR)
-	mv $(BONUS_DIR)/$(NAME) $(ROOT_DIR)
+	mv $(BONUS_DIR)/$(NAME) $(ROOT_DIR)/$(NAME)
 
 submit: fclean
 	mkdir -p $(SUBMIT_DIR)
@@ -36,10 +38,7 @@ submit: fclean
 		filename=$$(basename $$file .c); \
 		cp $$file $(SUBMIT_DIR)/$${filename}_bonus.c; \
 	done
-	for file in $(BONUS_DIR)/src/*.h; do \
-		filename=$$(basename $$file .h); \
-		cp $$file $(SUBMIT_DIR)/$${filename}_bonus.h; \
-	done
+	cp $(BONUS_DIR)/src/philo_bonus.h $(SUBMIT_DIR)/
 
 clean:
 	$(MAKE) -C $(MANDATORY_DIR) clean

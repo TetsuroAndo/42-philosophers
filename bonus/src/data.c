@@ -6,11 +6,11 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:43:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 07:47:54 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 08:27:52 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 static long	ft_atol(const char *nptr)
 {
@@ -42,7 +42,7 @@ static long	ft_atol(const char *nptr)
 int	parse_args(t_cfg *cf, int ac, char **av)
 {
 	if (ac < 5 || ac > 6)
-		usage();
+		usage(av);
 	cf->n_philo = ft_atol(av[1]);
 	cf->t_die = ft_atol(av[2]);
 	cf->t_eat = ft_atol(av[3]);
