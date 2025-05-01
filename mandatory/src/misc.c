@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:42:27 by teando            #+#    #+#             */
-/*   Updated: 2025/04/30 08:32:24 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/01 14:15:11 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ void	msleep(long ms, t_data *d)
 	long	target;
 
 	target = now_ms() + ms;
-	while (!d->stop && now_ms() < target)
-		usleep(100);
+	while (!check_stop(d) && now_ms() < target)
+		usleep(10);
 }
 
 void	put_state(t_philo *p, char *msg)
 {
 	pthread_mutex_lock(&p->data->print_mtx);
-	if (!p->data->stop)
+	if (!check_stop(p->data))
 		printf("%ld %d %s\n", now_ms() - p->data->start_ts, p->id, msg);
 	pthread_mutex_unlock(&p->data->print_mtx);
 }
