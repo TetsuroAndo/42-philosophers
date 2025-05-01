@@ -5,6 +5,7 @@ obj
 objs
 philosophers
 philo
+philo_bonus
 playground
 
 # tester
