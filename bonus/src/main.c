@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 00:03:42 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 07:55:28 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 08:06:10 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static inline void	born(t_ctx *gc, long id)
 {
 	t_ctx	lc;
 	t_philo	lp;
-	
+
 	lp.id = id;
 	lp.last_meal = gc->start_ts;
 	lp.eat_count = 0;
