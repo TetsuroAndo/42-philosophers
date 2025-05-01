@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 20:48:30 by teando            #+#    #+#             */
-/*   Updated: 2025/04/30 05:16:46 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/01 17:28:27 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	puterr(const char *s)
 	return (0);
 }
 
-int	usage(void)
+void	usage(void)
 {
 	puterr("Usage: ./philo <num_philos> <time_die> <time_eat> "
 			"<time_sleep> [num_must_eat]\n\n");
@@ -38,7 +38,7 @@ int	usage(void)
 	puterr("time_eat [ms]    the time it takes them to eat\n");
 	puterr("time_sleep [ms]  the amount of sleep they need\n");
 	puterr("num_must_eat     number of times each philosopher must eat\n");
-	return (EXIT_FAILURE);
+	exit(EXIT_FAILURE);
 }
 
 int	puterr_ret(char *msg)
@@ -47,4 +47,12 @@ int	puterr_ret(char *msg)
 	puterr(msg);
 	puterr("\n");
 	return (EXIT_FAILURE);
+}
+
+void	puterr_exit(char *msg)
+{
+	puterr("Error: ");
+	puterr(msg);
+	puterr("\n");
+	exit(EXIT_FAILURE);
 }

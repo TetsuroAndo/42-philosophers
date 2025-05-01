@@ -6,60 +6,91 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 00:03:42 by teando            #+#    #+#             */
-/*   Updated: 2025/05/01 14:26:41 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 04:08:17 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static inline void	set_start_ts(t_data *d)
+static inline int	wait_all_childs(t_ctx *gc, pid_t *pids)
+{
+	pid_t	pid;
+	int		status;
+	long	finished;
+	long	i;
+
+	finished = 0;
+	while (finished < gc->cf->n_philo)
+	{
+		pid = waitpid(-1, &status, 0);
+		if (pid < 0)
+			break ;
+		if (!WIFEXITED(status) || WEXITSTATUS(status))
+		{
+			i = 0;
+			while (i < gc->cf->n_philo)
+				kill(pids[i++], SIGTERM);
+		}
+		++finished;
+	}
+	return (finished);
+}
+
+static inline void	born(t_ctx *gc, const char *fn, const char *pn)
+{
+	t_ctx	lc;
+
+	lc.id = gc->id;
+	lc.cf = gc->cf;
+	lc.shm = gc->shm;
+	lc.forks_sem = sem_open(fn, 0);
+	lc.print_sem = sem_open(pn, 0);
+	if (lc.forks_sem == SEM_FAILED || lc.print_sem == SEM_FAILED)
+	{
+		perror("child sem_open");
+		exit(1);
+	}
+	life(&lc);
+}
+
+static inline long	creation(t_ctx *gc, pid_t *pids, const char *fn,
+		const char *pn)
 {
 	long	i;
 
-	d->start_ts = now_ms() + 100;
+	gc->shm->start_ts = 0;
 	i = -1;
-	while (++i < d->n_philo)
-		d->philos[i].last_meal = d->start_ts;
-}
-
-static inline long	start_sim(t_data *d)
-{
-	long		i;
-	pthread_t	ovs;
-
-	d->start_ts = 0;
-	i = -1;
-	while (++i < d->n_philo)
+	while (++i < gc->cf->n_philo)
 	{
-		if (pthread_create(&d->philos[i].th, NULL, life, &d->philos[i]))
-			return (puterr_ret("Failed to create Philosopher thread"));
+		pids[i] = fork();
+		if (pids[i] == 0)
+			born(gc, fn, pn);
+		else if (pids[i] < 0)
+			return (perror("fork"), 1);
 	}
-	if (pthread_create(&ovs, NULL, observer, d))
-		return (puterr_ret("Failed to create Observer thread"));
-	set_start_ts(d);
-	pthread_join(ovs, NULL);
+	gc->shm->start_ts = now_ms() + 100;
 	while (--i >= 0)
-		pthread_join(d->philos[i].th, NULL);
+		gc->shm->p[i].last_meal = gc->shm->start_ts;
 	return (0);
 }
 
 int	main(int ac, char **av)
 {
-	t_data	d;
+	t_ctx		gc;
+	pid_t		*pids;
+	const char	*fn = "/forks_sem_perm";
+	const char	*pn = "/print_sem_perm";
 
-	if (ac < 5 || ac > 6)
-		return (usage());
-	if (parse_args(&d, ac, av))
+	if (parse_args(&gc.cf, ac, av))
 		return (puterr_ret("Bad arguments"));
-	if (init_data(&d))
-	{
+	if (init_data(&gc, pids, fn, pn))
 		return (puterr_ret("Initialize Philosophers failed"));
-	}
-	if (start_sim(&d))
+	if (creation(&gc, pids, fn, pn))
 	{
-		destroy_data(&d);
+		destroy(&gc, pids, fn, pn);
 		return (puterr_ret("Simulation failed"));
 	}
-	destroy_data(&d);
+	wait_all_childs(&gc, pids);
+	destroy(&gc, pids, fn, pn);
 	return (EXIT_SUCCESS);
 }

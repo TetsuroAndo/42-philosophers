@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   misc_bonus.c                                       :+:      :+:    :+:   */
+/*   misc.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:42:27 by teando            #+#    #+#             */
-/*   Updated: 2025/05/01 14:50:36 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 04:37:55 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,36 +20,29 @@ long	now_ms(void)
 	return (t.tv_sec * 1000L + t.tv_usec / 1000);
 }
 
-void	msleep(long ms, t_data *d)
+void	msleep(long ms, t_ctx *c)
 {
 	long	target;
 
 	target = now_ms() + ms;
-	while (!check_stop(d) && now_ms() < target)
-		usleep(10);
+	while (!check_stop(c->shm) && now_ms() < target)
+		usleep(100);
 }
 
-void	put_state(t_philo *p, char *msg)
+void	put_state(t_ctx *c, char *msg)
 {
-	pthread_mutex_lock(&p->data->print_mtx);
-	if (!check_stop(p->data))
-		printf("%ld %d %s\n", now_ms() - p->data->start_ts, p->id, msg);
-	pthread_mutex_unlock(&p->data->print_mtx);
+	sem_wait(c->print_sem);
+	if (!check_stop(c->shm))
+		printf("%ld %d %s\n", now_ms() - c->shm->start_ts, c->id, msg);
+	sem_post(c->print_sem);
 }
 
-void	set_stop(t_data *d)
+void	set_stop(t_ctx *c)
 {
-	pthread_mutex_lock(&d->stop_mtx);
-	d->stop = 1;
-	pthread_mutex_unlock(&d->stop_mtx);
+	c->shm->stop = 1;
 }
 
-int	check_stop(t_data *d)
+int	check_stop(t_shared *shm)
 {
-	int	ret;
-
-	pthread_mutex_lock(&d->stop_mtx);
-	ret = d->stop;
-	pthread_mutex_unlock(&d->stop_mtx);
-	return (ret);
+	return (shm->stop);
 }
