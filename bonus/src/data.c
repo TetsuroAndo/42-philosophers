@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:43:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 06:11:06 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 07:47:54 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,42 +59,37 @@ int	parse_args(t_cfg *cf, int ac, char **av)
 	return (0);
 }
 
-int	init_data(t_ctx *c, pid_t **pids, const char *fn, const char *pn)
+int	init_data(t_ctx *c, pid_t **pids)
 {
-	long i;
+	int	 philos;
+	int  dining;
 
-	sem_unlink_all(fn, pn);
-	c->forks_sem = sem_open(fn, O_CREAT | O_EXCL, 0600, c->cf.n_philo);
-	c->print_sem = sem_open(pn, O_CREAT | O_EXCL, 0600, 1);
-	if (c->forks_sem == SEM_FAILED || c->print_sem == SEM_FAILED)
+	sem_unlink_all(&c->sem);
+	philos = c->cf.n_philo;
+	dining = philos - 1;
+	c->sem.forks_sem = sem_open(c->sem.fn, O_CREAT | O_EXCL, 0600, philos);
+	c->sem.print_sem = sem_open(c->sem.pn, O_CREAT | O_EXCL, 0600, 1);
+	c->sem.dining_sem = sem_open(c->sem.dn, O_CREAT | O_EXCL, 0600, dining);
+	if (c->sem.forks_sem == SEM_FAILED || c->sem.print_sem == SEM_FAILED || c->sem.dining_sem == SEM_FAILED)
 		return (puterr_ret("sem_open failed"));
-	*pids = malloc(sizeof(pid_t) * c->cf.n_philo);
+	*pids = malloc(sizeof(pid_t) * philos);
 	if (!*pids)
 		return (puterr_ret("Malloc failed"));
-	c->p = malloc(sizeof(t_philo) * c->cf.n_philo);
-	if (!c->p)
-		return (free(*pids), puterr_ret("Malloc failed"));
-	i = -1;
-	while (++i < c->cf.n_philo)
-	{
-		c->p[i].id = i + 1;
-		c->p[i].last_meal = 0;
-		c->p[i].eat_count = 0;
-	}
 	return (0);
 }
 
-void	sem_unlink_all(const char *fn, const char *pn)
+void	sem_unlink_all(t_sem_set *sem)
 {
-	sem_unlink(fn);
-	sem_unlink(pn);
+	sem_unlink(sem->fn);
+	sem_unlink(sem->pn);
+	sem_unlink(sem->dn);
 }
 
-void	destroy(t_ctx *c, pid_t *pids, const char *fn, const char *pn)
+void	destroy(t_ctx *c, pid_t *pids)
 {
-	sem_close(c->forks_sem);
-	sem_close(c->print_sem);
-	sem_unlink_all(fn, pn);
+	sem_close(c->sem.forks_sem);
+	sem_close(c->sem.print_sem);
+	sem_close(c->sem.dining_sem);
+	sem_unlink_all(&c->sem);
 	free(pids);
-	free(c->p);
 }

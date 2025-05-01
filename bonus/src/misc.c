@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:42:27 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 06:19:06 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 07:47:38 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	msleep(long ms)
 
 void	put_state(t_ctx *c, long id, char *msg)
 {
-	sem_wait(c->print_sem);
+	sem_wait(c->sem.print_sem);
 	printf("%ld %ld %s\n", now_ms() - c->start_ts, id, msg);
-	sem_post(c->print_sem);
+	sem_post(c->sem.print_sem);
 }

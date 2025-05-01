@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 14:51:02 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 06:18:27 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 07:44:01 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,21 @@ typedef struct s_cfg
 	long		must_eat;
 }				t_cfg;
 
+typedef struct s_sem_set
+{
+	const char	*fn;
+	const char	*pn;
+	const char	*dn;
+	sem_t		*forks_sem;
+	sem_t		*print_sem;
+	sem_t		*dining_sem;
+}				t_sem_set;
+
 typedef struct s_ctx
 {
 	long		start_ts;
 	t_cfg		cf;
-	sem_t		*forks_sem;
-	sem_t		*print_sem;
-	t_philo		*p;
+	t_sem_set	sem;
 }				t_ctx;
 
 typedef struct s_obs_arg
@@ -58,15 +66,14 @@ typedef struct s_obs_arg
 }				t_obs_arg;
 
 /* main process */
-void			life(t_ctx *c, long id);
+void			life(t_ctx *c, t_philo *self);
 void			*observer(void *arg);
 
 /* data.c */
 int				parse_args(t_cfg *cf, int ac, char **av);
-int				init_data(t_ctx *c, pid_t **pids, const char *fn,
-					const char *pn);
-void			sem_unlink_all(const char *fn, const char *pn);
-void			destroy(t_ctx *c, pid_t *pids, const char *fn, const char *pn);
+int				init_data(t_ctx *c, pid_t **pids);
+void			sem_unlink_all(t_sem_set *sem);
+void			destroy(t_ctx *c, pid_t *pids);
 
 /* misc.c */
 long			now_ms(void);
