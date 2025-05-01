@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 14:51:02 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 04:37:54 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 05:54:54 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <errno.h>
 # include <limits.h>
 # include <pthread.h>
+# include <signal.h>
 # include <semaphore.h>
 # include <stddef.h>
 # include <stdio.h>
@@ -27,16 +28,10 @@
 
 typedef struct s_philo
 {
+	long		id;
 	long		last_meal;
 	long		eat_count;
 }				t_philo;
-
-typedef struct s_shared
-{
-	long		start_ts;
-	int			stop;
-	t_philo		*p;
-}				t_shared;
 
 typedef struct s_cfg
 {
@@ -49,11 +44,11 @@ typedef struct s_cfg
 
 typedef struct s_ctx
 {
-	long		id;
+	long		start_ts;
 	t_cfg		*cf;
-	t_shared	*shm;
 	sem_t		*forks_sem;
 	sem_t		*print_sem;
+	t_philo		*p;
 }				t_ctx;
 
 typedef struct s_obs_arg
@@ -63,22 +58,20 @@ typedef struct s_obs_arg
 }				t_obs_arg;
 
 /* main process */
-
+void			life(t_ctx *c, long id);
 void			*observer(void *arg);
 
 /* data.c */
 int				parse_args(t_cfg *cf, int ac, char **av);
-int				init_data(t_ctx *c, pid_t *pids, const char *fn,
+int				init_data(t_ctx *c, pid_t **pids, const char *fn,
 					const char *pn);
 void			sem_unlink_all(const char *fn, const char *pn);
 void			destroy(t_ctx *c, pid_t *pids, const char *fn, const char *pn);
 
 /* misc.c */
 long			now_ms(void);
-void			msleep(long ms, t_ctx *c);
-void			put_state(t_ctx *c, char *msg);
-void			set_stop(t_ctx *c);
-int				check_stop(t_shared *shm);
+void			msleep(long ms);
+void			put_state(t_ctx *c, long id, char *msg);
 
 /* err.c */
 int				puterr(const char *s);

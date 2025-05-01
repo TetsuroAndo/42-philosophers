@@ -6,13 +6,13 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 00:03:42 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 04:08:17 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 05:55:02 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static inline int	wait_all_childs(t_ctx *gc, pid_t *pids)
+static inline int	wait_all_childs(t_ctx *c, pid_t *pids)
 {
 	pid_t	pid;
 	int		status;
@@ -20,7 +20,7 @@ static inline int	wait_all_childs(t_ctx *gc, pid_t *pids)
 	long	i;
 
 	finished = 0;
-	while (finished < gc->cf->n_philo)
+	while (finished < c->cf->n_philo)
 	{
 		pid = waitpid(-1, &status, 0);
 		if (pid < 0)
@@ -28,7 +28,7 @@ static inline int	wait_all_childs(t_ctx *gc, pid_t *pids)
 		if (!WIFEXITED(status) || WEXITSTATUS(status))
 		{
 			i = 0;
-			while (i < gc->cf->n_philo)
+			while (i < c->cf->n_philo)
 				kill(pids[i++], SIGTERM);
 		}
 		++finished;
@@ -36,61 +36,58 @@ static inline int	wait_all_childs(t_ctx *gc, pid_t *pids)
 	return (finished);
 }
 
-static inline void	born(t_ctx *gc, const char *fn, const char *pn)
+static inline void	born(t_ctx *c, long id, const char *fn, const char *pn)
 {
 	t_ctx	lc;
 
-	lc.id = gc->id;
-	lc.cf = gc->cf;
-	lc.shm = gc->shm;
+	lc.cf = c->cf;
+	lc.start_ts = c->start_ts;
 	lc.forks_sem = sem_open(fn, 0);
 	lc.print_sem = sem_open(pn, 0);
+	lc.p = &c->p[id - 1];
 	if (lc.forks_sem == SEM_FAILED || lc.print_sem == SEM_FAILED)
-	{
-		perror("child sem_open");
-		exit(1);
-	}
-	life(&lc);
+		puterr_exit("child sem_open");
+	life(&lc, id);
 }
 
-static inline long	creation(t_ctx *gc, pid_t *pids, const char *fn,
+static inline long	creation(t_ctx *c, pid_t *pids, const char *fn,
 		const char *pn)
 {
 	long	i;
 
-	gc->shm->start_ts = 0;
+	c->start_ts = 0;
 	i = -1;
-	while (++i < gc->cf->n_philo)
+	while (++i < c->cf->n_philo)
 	{
 		pids[i] = fork();
+		if (pids[i] < 0)
+			exit(puterr_ret("fork"));
 		if (pids[i] == 0)
-			born(gc, fn, pn);
-		else if (pids[i] < 0)
-			return (perror("fork"), 1);
+			born(c, i + 1, fn, pn);
 	}
-	gc->shm->start_ts = now_ms() + 100;
+	c->start_ts = now_ms() + 100;
 	while (--i >= 0)
-		gc->shm->p[i].last_meal = gc->shm->start_ts;
+		c->p[i].last_meal = c->start_ts;
 	return (0);
 }
 
 int	main(int ac, char **av)
 {
-	t_ctx		gc;
+	t_ctx		c;
 	pid_t		*pids;
 	const char	*fn = "/forks_sem_perm";
 	const char	*pn = "/print_sem_perm";
 
-	if (parse_args(&gc.cf, ac, av))
+	if (parse_args(c.cf, ac, av))
 		return (puterr_ret("Bad arguments"));
-	if (init_data(&gc, pids, fn, pn))
+	if (init_data(&c, &pids, fn, pn))
 		return (puterr_ret("Initialize Philosophers failed"));
-	if (creation(&gc, pids, fn, pn))
+	if (creation(&c, pids, fn, pn))
 	{
-		destroy(&gc, pids, fn, pn);
+		destroy(&c, pids, fn, pn);
 		return (puterr_ret("Simulation failed"));
 	}
-	wait_all_childs(&gc, pids);
-	destroy(&gc, pids, fn, pn);
+	wait_all_childs(&c, pids);
+	destroy(&c, pids, fn, pn);
 	return (EXIT_SUCCESS);
 }

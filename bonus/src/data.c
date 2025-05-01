@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:43:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 04:07:21 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 05:43:33 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,16 +59,28 @@ int	parse_args(t_cfg *cf, int ac, char **av)
 	return (0);
 }
 
-int	init_data(t_ctx *c, pid_t *pids, const char *fn, const char *pn)
+int	init_data(t_ctx *c, pid_t **pids, const char *fn, const char *pn)
 {
+	long i;
+
 	sem_unlink_all(fn, pn);
 	c->forks_sem = sem_open(fn, O_CREAT | O_EXCL, 0600, c->cf->n_philo);
 	c->print_sem = sem_open(pn, O_CREAT | O_EXCL, 0600, 1);
 	if (c->forks_sem == SEM_FAILED || c->print_sem == SEM_FAILED)
-		return (perror("sem_open"), 1);
-	pids = malloc(sizeof(pid_t) * c->cf->n_philo);
-	if (!pids)
-		return (perror("malloc"), 1);
+		return (puterr_ret("sem_open"));
+	*pids = malloc(sizeof(pid_t) * c->cf->n_philo);
+	if (!*pids)
+		return (puterr_ret("malloc"));
+	c->p = malloc(sizeof(t_philo) * c->cf->n_philo);
+	if (!c->p)
+		return (free(*pids), puterr_ret("malloc"));
+	i = -1;
+	while (++i < c->cf->n_philo)
+	{
+		c->p[i].id = i + 1;
+		c->p[i].last_meal = 0;
+		c->p[i].eat_count = 0;
+	}
 	return (0);
 }
 
@@ -80,8 +92,9 @@ void	sem_unlink_all(const char *fn, const char *pn)
 
 void	destroy(t_ctx *c, pid_t *pids, const char *fn, const char *pn)
 {
-	free(pids);
-	sem_unlink_all(fn, pn);
 	sem_close(c->forks_sem);
 	sem_close(c->print_sem);
+	sem_unlink_all(fn, pn);
+	free(pids);
+	free(c->p);
 }
