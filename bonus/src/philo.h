@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 14:51:02 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 07:54:07 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 08:05:08 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ typedef struct s_obs_arg
 
 /* main process */
 void			life(t_ctx *c, t_philo *self);
-void			*observer(void *arg);
 
 /* data.c */
 int				parse_args(t_cfg *cf, int ac, char **av);

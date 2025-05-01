@@ -6,13 +6,13 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 14:51:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 07:59:52 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 08:04:11 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	*ph_guardian(void *arg)
+static inline void	*ph_guardian(void *arg)
 {
 	t_obs_arg	*obs;
 	t_ctx		*c;
