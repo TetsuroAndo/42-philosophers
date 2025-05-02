@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:43:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 09:34:29 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 09:44:51 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,10 +90,14 @@ void	sem_unlink_all(t_sem_set *sem)
 
 void	destroy(t_ctx *c, pid_t *pids)
 {
-	sem_close(c->sem.forks_sem);
-	sem_close(c->sem.print_sem);
-	sem_close(c->sem.dining_sem);
-	sem_close(c->sem.meal_sem);
+	if (c->sem.forks_sem != SEM_FAILED)
+		sem_close(c->sem.forks_sem);
+	if (c->sem.print_sem != SEM_FAILED)
+		sem_close(c->sem.print_sem);
+	if (c->sem.dining_sem != SEM_FAILED)
+		sem_close(c->sem.dining_sem);
+	if (c->sem.meal_sem != SEM_FAILED)
+		sem_close(c->sem.meal_sem);
 	sem_unlink_all(&c->sem);
 	if (pids)
 		free(pids);
