@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:49:40 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 07:53:35 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 08:11:46 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,19 +67,20 @@ static inline int	philo_eat(t_philo *p)
 void	*life(void *arg)
 {
 	t_philo	*p;
-	long	wait_st;
 
 	p = (t_philo *)arg;
 	while (1)
 	{
 		pthread_mutex_lock(&p->d->stop_mtx);
-		wait_st = p->d->start_ts;
-		pthread_mutex_unlock(&p->d->stop_mtx);
-		if (wait_st && now_ms() >= wait_st)
+		if (p->d->start_ts && now_ms() >= p->d->start_ts)
 			break ;
+		pthread_mutex_unlock(&p->d->stop_mtx);
 		usleep(100);
 	}
-	if (p->id % 2 == 0)
+	pthread_mutex_unlock(&p->d->stop_mtx);
+	if (p->d->cf.n_philo % 2 == 1)
+		usleep((p->id - 1) / 2 * p->d->cf.t_eat);
+	else if (p->id % 2 == 0)
 		usleep(p->d->cf.t_eat * 0.8);
 	while (!check_stop(p->d))
 	{
