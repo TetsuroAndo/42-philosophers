@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 14:51:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 09:39:56 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 08:50:53 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static inline void	*ph_guardian(void *arg)
 	obs = (t_obs_arg *)arg;
 	c = obs->c;
 	self = obs->self;
-	while (now_ms() < self->last_meal)
+	while (now_ms() < c->start_ts)
 		usleep(100);
 	while (1)
 	{
@@ -31,17 +31,23 @@ static inline void	*ph_guardian(void *arg)
 	return (NULL);
 }
 
+static inline void	ph_one(t_ctx *c, t_philo *self)
+{
+	while (now_ms() < c->start_ts)
+		usleep(100);
+	sem_wait(c->sem.forks_sem);
+	put_state(c, self->id, "has taken a fork");
+	msleep(c->cf.t_die);
+	sem_post(c->sem.forks_sem);
+	watch_died(c, self);
+	exit(1);
+}
+
 static inline void	eat(t_ctx *c, t_philo *self)
 {
 	sem_wait(c->sem.dining_sem);
 	sem_wait(c->sem.forks_sem);
 	put_state(c, self->id, "has taken a fork");
-	if (c->cf.n_philo <= 1)
-	{
-		sem_post(c->sem.forks_sem);
-		sem_post(c->sem.dining_sem);
-		exit(1);
-	}
 	sem_wait(c->sem.forks_sem);
 	put_state(c, self->id, "has taken a fork");
 	write_meal(c, self);
@@ -53,7 +59,7 @@ static inline void	eat(t_ctx *c, t_philo *self)
 		exit(0);
 }
 
-void	life(t_ctx *c, t_philo *self)
+static inline void	give_guardian(t_ctx *c, t_philo *self)
 {
 	t_obs_arg	arg;
 	pthread_t	th;
@@ -63,8 +69,17 @@ void	life(t_ctx *c, t_philo *self)
 	if (pthread_create(&th, NULL, ph_guardian, &arg))
 		puterr_exit("pthread_create");
 	pthread_detach(th);
-	while (now_ms() < self->last_meal)
+}
+
+
+void	life(t_ctx *c, t_philo *self)
+{
+	if (c->cf.n_philo == 1)
+		ph_one(c, self);
+	give_guardian(c, self);
+	while (now_ms() < c->start_ts)
 		usleep(100);
+	usleep((self->id - 1) / 2 * c->cf.t_eat);
 	while (1)
 	{
 		put_state(c, self->id, "is thinking");

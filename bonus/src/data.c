@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:43:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 09:49:24 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 08:28:49 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,12 @@ int	parse_args(t_cfg *cf, int ac, char **av)
 	cf->t_sleep = ft_atol(av[4]);
 	cf->must_eat = -1;
 	if (ac == 6)
+	{
 		cf->must_eat = ft_atol(av[5]);
-	if (cf->n_philo <= 0 || cf->t_die <= 0 || cf->t_eat <= 0 || cf->t_sleep <= 0
-		|| cf->must_eat < -1)
+		if (cf->must_eat < 0)
+			return (1);
+	}
+	if (cf->n_philo <= 0 || cf->t_die <= 0 || cf->t_eat <= 0 || cf->t_sleep <= 0)
 		return (1);
 	if (cf->n_philo > INT_MAX || cf->t_die > INT_MAX || cf->t_eat > INT_MAX
 		|| cf->t_sleep > INT_MAX || cf->must_eat > INT_MAX)

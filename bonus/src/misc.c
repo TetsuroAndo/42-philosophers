@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:42:27 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 10:00:44 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 08:49:03 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,11 @@ void	put_state(t_ctx *c, long id, char *msg)
 
 void	write_meal(t_ctx *c, t_philo *p)
 {
+	long	current_time;
+
+	current_time = now_ms();
 	sem_wait(c->sem.meal_sem);
-	p->last_meal = now_ms();
+	p->last_meal = current_time;
 	p->eat_count++;
 	sem_post(c->sem.meal_sem);
 	put_state(c, p->id, "is eating");
@@ -47,13 +50,17 @@ void	write_meal(t_ctx *c, t_philo *p)
 
 void	watch_died(t_ctx *c, t_philo *p)
 {
+	long	current_time;
+	long	last_meal_time;
+
+	current_time = now_ms();
 	sem_wait(c->sem.meal_sem);
-	if (now_ms() - p->last_meal >= c->cf.t_die)
+	last_meal_time = p->last_meal;
+	sem_post(c->sem.meal_sem);
+	if (current_time - last_meal_time >= c->cf.t_die)
 	{
-		sem_post(c->sem.meal_sem);
 		sem_wait(c->sem.print_sem);
-		printf("%ld %ld died\n", now_ms() - c->start_ts, p->id);
+		printf("%ld %ld died\n", current_time - c->start_ts, p->id);
 		exit(1);
 	}
-	sem_post(c->sem.meal_sem);
 }
