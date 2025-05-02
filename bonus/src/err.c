@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 20:48:30 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 08:55:14 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 09:56:12 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ void	usage(char **av)
 		puterr(av[0]);
 	else
 		puterr("./philo");
-	puterr(" <num_philos> <time_die> <time_eat> <time_sleep> [num_must_eat]\n\n");
-	puterr("num_philos       number of philosophers and nunber of forks\n");
+	puterr(" <num_philos> <time_die> <time_eat> <time_sleep> [num_must_eat]");
+	puterr("\n\nnum_philos       number of philosophers and nunber of forks\n");
 	puterr("time_die [ms]    the time in when they must start eating\n");
 	puterr("time_eat [ms]    the time it takes them to eat\n");
 	puterr("time_sleep [ms]  the amount of sleep they need\n");
