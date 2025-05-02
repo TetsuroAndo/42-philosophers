@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 00:03:42 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 08:22:17 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 09:37:48 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,14 @@ int	main(int ac, char **av)
 	c.sem.fn = "/forks_sem_perm";
 	c.sem.pn = "/print_sem_perm";
 	c.sem.dn = "/dining_sem_perm";
+	c.sem.mn = "/meal_sem_perm";
 	if (parse_args(&c.cf, ac, av))
 		return (puterr_ret("Bad arguments"));
 	if (init_data(&c, &pids))
+	{
+		destroy(&c, NULL);
 		return (puterr_ret("Initialize Philosophers failed"));
+	}
 	if (creation(&c, pids))
 	{
 		destroy(&c, pids);

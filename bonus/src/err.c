@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 20:48:30 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 08:25:51 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 08:55:14 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ size_t	ft_strlen(const char *s)
 int	puterr(const char *s)
 {
 	if (write(STDERR_FILENO, s, ft_strlen(s)) == -1)
-		return (-1);
+		exit(EXIT_FAILURE);
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:42:27 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 08:22:05 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 09:38:22 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,26 @@ void	put_state(t_ctx *c, long id, char *msg)
 	sem_wait(c->sem.print_sem);
 	printf("%ld %ld %s\n", now_ms() - c->start_ts, id, msg);
 	sem_post(c->sem.print_sem);
+}
+
+void	write_meal(t_ctx *c, t_philo *p)
+{
+	sem_wait(c->sem.meal_sem);
+	put_state(c, p->id, "is eating");
+	p->last_meal = now_ms();
+	p->eat_count++;
+	sem_post(c->sem.meal_sem);
+}
+
+void	watch_died(t_ctx *c, t_philo *p)
+{
+	sem_wait(c->sem.meal_sem);
+	if (now_ms() - p->last_meal >= c->cf.t_die)
+	{
+		sem_wait(c->sem.print_sem);
+		printf("%ld %ld died\n", now_ms() - c->start_ts, p->id);
+		sem_post(c->sem.print_sem);
+		exit(1);
+	}
+	sem_post(c->sem.meal_sem);
 }

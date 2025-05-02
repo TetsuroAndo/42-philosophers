@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:43:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 08:27:52 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 09:34:29 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,9 @@ int	init_data(t_ctx *c, pid_t **pids)
 	c->sem.forks_sem = sem_open(c->sem.fn, O_CREAT | O_EXCL, 0600, philos);
 	c->sem.print_sem = sem_open(c->sem.pn, O_CREAT | O_EXCL, 0600, 1);
 	c->sem.dining_sem = sem_open(c->sem.dn, O_CREAT | O_EXCL, 0600, dining);
+	c->sem.meal_sem = sem_open(c->sem.mn, O_CREAT | O_EXCL, 0600, philos);
 	if (c->sem.forks_sem == SEM_FAILED || c->sem.print_sem == SEM_FAILED
-		|| c->sem.dining_sem == SEM_FAILED)
+		|| c->sem.dining_sem == SEM_FAILED || c->sem.meal_sem == SEM_FAILED)
 		return (puterr_ret("sem_open failed"));
 	*pids = malloc(sizeof(pid_t) * philos);
 	if (!*pids)
@@ -84,6 +85,7 @@ void	sem_unlink_all(t_sem_set *sem)
 	sem_unlink(sem->fn);
 	sem_unlink(sem->pn);
 	sem_unlink(sem->dn);
+	sem_unlink(sem->mn);
 }
 
 void	destroy(t_ctx *c, pid_t *pids)
@@ -91,6 +93,8 @@ void	destroy(t_ctx *c, pid_t *pids)
 	sem_close(c->sem.forks_sem);
 	sem_close(c->sem.print_sem);
 	sem_close(c->sem.dining_sem);
+	sem_close(c->sem.meal_sem);
 	sem_unlink_all(&c->sem);
-	free(pids);
+	if (pids)
+		free(pids);
 }

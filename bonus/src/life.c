@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 14:51:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 08:22:17 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 09:39:56 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,7 @@ static inline void	*ph_guardian(void *arg)
 		usleep(100);
 	while (1)
 	{
-		if (now_ms() - self->last_meal >= c->cf.t_die)
-		{
-			sem_wait(c->sem.print_sem);
-			printf("%ld %ld died\n", now_ms() - c->start_ts, self->id);
-			sem_post(c->sem.print_sem);
-			exit(1);
-		}
+		watch_died(c, self);
 		usleep(100);
 	}
 	return (NULL);
@@ -50,9 +44,7 @@ static inline void	eat(t_ctx *c, t_philo *self)
 	}
 	sem_wait(c->sem.forks_sem);
 	put_state(c, self->id, "has taken a fork");
-	put_state(c, self->id, "is eating");
-	self->last_meal = now_ms();
-	self->eat_count++;
+	write_meal(c, self);
 	msleep(c->cf.t_eat);
 	sem_post(c->sem.forks_sem);
 	sem_post(c->sem.forks_sem);

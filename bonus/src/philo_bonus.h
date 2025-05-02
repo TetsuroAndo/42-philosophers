@@ -46,9 +46,11 @@ typedef struct s_sem_set
 	const char	*fn;
 	const char	*pn;
 	const char	*dn;
+	const char	*mn;
 	sem_t		*forks_sem;
 	sem_t		*print_sem;
 	sem_t		*dining_sem;
+	sem_t		*meal_sem;
 }				t_sem_set;
 
 typedef struct s_ctx
@@ -77,6 +79,8 @@ void			destroy(t_ctx *c, pid_t *pids);
 long			now_ms(void);
 void			msleep(long ms);
 void			put_state(t_ctx *c, long id, char *msg);
+void			write_meal(t_ctx *c, t_philo *p);
+void			watch_died(t_ctx *c, t_philo *p);
 
 /* err.c */
 int				puterr(const char *s);
