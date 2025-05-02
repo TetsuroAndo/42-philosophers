@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:49:40 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 08:11:46 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 08:43:44 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,6 @@ static inline int	take_forks(t_philo *p)
 	return (0);
 }
 
-static inline void	drop_forks(t_philo *p)
-{
-	pthread_mutex_unlock(p->fork_l);
-	if (p->d->cf.n_philo > 1)
-		pthread_mutex_unlock(p->fork_r);
-}
-
 static inline int	philo_eat(t_philo *p)
 {
 	if (take_forks(p))
@@ -58,7 +51,8 @@ static inline int	philo_eat(t_philo *p)
 	put_state(p, "is eating");
 	set_last_meal(p, now_ms());
 	msleep(p->d->cf.t_eat, p->d);
-	drop_forks(p);
+	pthread_mutex_unlock(p->fork_l);
+	pthread_mutex_unlock(p->fork_r);
 	if (p->d->cf.must_eat >= 0 && p->eat_count >= p->d->cf.must_eat)
 		return (1);
 	return (0);
@@ -69,15 +63,7 @@ void	*life(void *arg)
 	t_philo	*p;
 
 	p = (t_philo *)arg;
-	while (1)
-	{
-		pthread_mutex_lock(&p->d->stop_mtx);
-		if (p->d->start_ts && now_ms() >= p->d->start_ts)
-			break ;
-		pthread_mutex_unlock(&p->d->stop_mtx);
-		usleep(100);
-	}
-	pthread_mutex_unlock(&p->d->stop_mtx);
+	start_wait(p->d);
 	if (p->d->cf.n_philo % 2 == 1)
 		usleep((p->id - 1) / 2 * p->d->cf.t_eat);
 	else if (p->id % 2 == 0)

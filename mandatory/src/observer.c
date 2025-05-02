@@ -6,11 +6,18 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:46:34 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 08:11:13 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 08:43:30 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static inline void	set_stop(t_data *d)
+{
+	pthread_mutex_lock(&d->stop_mtx);
+	d->stop = 1;
+	pthread_mutex_unlock(&d->stop_mtx);
+}
 
 static inline int	watch_dead(t_data *d)
 {
@@ -44,14 +51,7 @@ void	*observer(void *arg)
 	t_data	*d;
 
 	d = (t_data *)arg;
-	while (1)
-	{
-		pthread_mutex_lock(&d->stop_mtx);
-		if (d->start_ts && now_ms() >= d->start_ts)
-			break ;
-		pthread_mutex_unlock(&d->stop_mtx);
-		usleep(100);
-	}
+	start_wait(d);
 	pthread_mutex_unlock(&d->stop_mtx);
 	while (!check_stop(d))
 	{

@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 22:53:35 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 08:12:13 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 08:43:24 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,8 @@ void					destory_philos(t_philo *philos, long n_philos);
 long					now_ms(void);
 void					msleep(long ms, t_data *d);
 void					put_state(t_philo *p, char *msg);
-void					set_stop(t_data *d);
 int						check_stop(t_data *d);
+void					start_wait(t_data *d);
 
 /* puterr.c */
 size_t					ft_strlen(const char *s);
