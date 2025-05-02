@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:42:27 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 09:53:32 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 10:00:44 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void	watch_died(t_ctx *c, t_philo *p)
 		sem_post(c->sem.meal_sem);
 		sem_wait(c->sem.print_sem);
 		printf("%ld %ld died\n", now_ms() - c->start_ts, p->id);
-		sem_post(c->sem.print_sem);
 		exit(1);
 	}
 	sem_post(c->sem.meal_sem);

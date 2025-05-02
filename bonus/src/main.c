@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 00:03:42 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 09:37:48 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 10:12:18 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ static inline void	wait_all_childs(t_ctx *c, pid_t *pids)
 			i = -1;
 			while (++i < c->cf.n_philo)
 				kill(pids[i], SIGTERM);
+			sem_post(c->sem.print_sem);
 			break ;
 		}
 	}
