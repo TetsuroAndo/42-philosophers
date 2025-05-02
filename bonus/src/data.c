@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:43:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 09:44:51 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/02 09:49:24 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int	init_data(t_ctx *c, pid_t **pids)
 	c->sem.forks_sem = sem_open(c->sem.fn, O_CREAT | O_EXCL, 0600, philos);
 	c->sem.print_sem = sem_open(c->sem.pn, O_CREAT | O_EXCL, 0600, 1);
 	c->sem.dining_sem = sem_open(c->sem.dn, O_CREAT | O_EXCL, 0600, dining);
-	c->sem.meal_sem = sem_open(c->sem.mn, O_CREAT | O_EXCL, 0600, philos);
+	c->sem.meal_sem = sem_open(c->sem.mn, O_CREAT | O_EXCL, 0600, 1);
 	if (c->sem.forks_sem == SEM_FAILED || c->sem.print_sem == SEM_FAILED
 		|| c->sem.dining_sem == SEM_FAILED || c->sem.meal_sem == SEM_FAILED)
 		return (puterr_ret("sem_open failed"));
