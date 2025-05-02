@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:43:26 by teando            #+#    #+#             */
-/*   Updated: 2025/04/30 08:22:40 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 07:37:56 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,20 +39,23 @@ static long	ft_atol(const char *nptr)
 	return (res);
 }
 
-int	parse_args(t_data *d, int ac, char **av)
+int	parse_args(t_cfg *c, int ac, char **av)
 {
-	d->n_philo = ft_atol(av[1]);
-	d->t_die = ft_atol(av[2]);
-	d->t_eat = ft_atol(av[3]);
-	d->t_sleep = ft_atol(av[4]);
-	d->must_eat = -1;
+	c->n_philo = ft_atol(av[1]);
+	c->t_die = ft_atol(av[2]);
+	c->t_eat = ft_atol(av[3]);
+	c->t_sleep = ft_atol(av[4]);
+	c->must_eat = -1;
 	if (ac == 6)
-		d->must_eat = ft_atol(av[5]);
-	if (d->n_philo <= 0 || d->t_die <= 0 || d->t_eat <= 0 || d->t_sleep <= 0
-		|| d->must_eat < -1)
+	{
+		c->must_eat = ft_atol(av[5]);
+		if (c->must_eat < 0)
+			return (1);
+	}
+	if (c->n_philo <= 0 || c->t_die <= 0 || c->t_eat <= 0 || c->t_sleep <= 0)
 		return (1);
-	if (d->n_philo > INT_MAX || d->t_die > INT_MAX || d->t_eat > INT_MAX
-		|| d->t_sleep > INT_MAX || d->must_eat > INT_MAX)
+	if (c->n_philo > INT_MAX || c->t_die > INT_MAX || c->t_eat > INT_MAX
+		|| c->t_sleep > INT_MAX || c->must_eat > INT_MAX)
 		return (1);
 	return (0);
 }
@@ -61,11 +64,11 @@ static int	create_philos(t_philo **philos, t_data *d)
 {
 	long	i;
 
-	d->philos = malloc(sizeof(t_philo) * d->n_philo);
-	if (!d->philos)
+	*philos = malloc(sizeof(t_philo) * d->cf.n_philo);
+	if (!*philos)
 		return (1);
 	i = -1;
-	while (++i < d->n_philo)
+	while (++i < d->cf.n_philo)
 	{
 		(*philos)[i].id = i + 1;
 		(*philos)[i].last_meal = 0;
@@ -74,14 +77,14 @@ static int	create_philos(t_philo **philos, t_data *d)
 		{
 			while (--i >= 0)
 				pthread_mutex_destroy(&(*philos)[i].meal_mtx);
-			return (free(d->philos), 1);
+			return (free(*philos), 1);
 		}
 		(*philos)[i].fork_l = &d->forks[i];
-		if (d->n_philo == 1)
+		if (d->cf.n_philo == 1)
 			(*philos)[i].fork_r = NULL;
 		else
-			(*philos)[i].fork_r = &d->forks[(i + 1) % d->n_philo];
-		(*philos)[i].data = d;
+			(*philos)[i].fork_r = &d->forks[(i + 1) % d->cf.n_philo];
+		(*philos)[i].d = d;
 	}
 	return (0);
 }
@@ -97,11 +100,11 @@ int	init_data(t_data *d)
 		return (1);
 	if (pthread_mutex_init(&d->print_mtx, NULL) == -1)
 		return (1);
-	d->forks = malloc(sizeof(pthread_mutex_t) * d->n_philo);
+	d->forks = malloc(sizeof(pthread_mutex_t) * d->cf.n_philo);
 	if (!d->forks)
 		return (1);
 	i = -1;
-	while (++i < d->n_philo)
+	while (++i < d->cf.n_philo)
 	{
 		if (pthread_mutex_init(&d->forks[i], NULL) == -1)
 		{
@@ -119,14 +122,14 @@ void	destroy_data(t_data *d)
 {
 	long	i;
 
-	i = -1;
-	while (++i < d->n_philo)
-		pthread_mutex_destroy(&d->forks[i]);
-	i = -1;
-	while (++i < d->n_philo)
-		pthread_mutex_destroy(&d->philos[i].meal_mtx);
 	pthread_mutex_destroy(&d->print_mtx);
 	pthread_mutex_destroy(&d->stop_mtx);
+	i = -1;
+	while (++i < d->cf.n_philo)
+		pthread_mutex_destroy(&d->forks[i]);
+	i = -1;
+	while (++i < d->cf.n_philo)
+		pthread_mutex_destroy(&d->philos[i].meal_mtx);
 	if (d->forks)
 	{
 		free(d->forks);

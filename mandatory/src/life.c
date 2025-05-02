@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:49:40 by teando            #+#    #+#             */
-/*   Updated: 2025/05/01 14:41:11 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 07:53:35 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static inline int	take_forks(t_philo *p)
 	}
 	pthread_mutex_lock(first);
 	put_state(p, "has taken a fork");
-	if (p->data->n_philo == 1)
+	if (p->d->cf.n_philo == 1)
 		return (1);
 	pthread_mutex_lock(second);
 	put_state(p, "has taken a fork");
@@ -47,7 +47,7 @@ static inline int	take_forks(t_philo *p)
 static inline void	drop_forks(t_philo *p)
 {
 	pthread_mutex_unlock(p->fork_l);
-	if (p->data->n_philo > 1)
+	if (p->d->cf.n_philo > 1)
 		pthread_mutex_unlock(p->fork_r);
 }
 
@@ -57,27 +57,37 @@ static inline int	philo_eat(t_philo *p)
 		return (1);
 	put_state(p, "is eating");
 	set_last_meal(p, now_ms());
-	msleep(p->data->t_eat, p->data);
+	msleep(p->d->cf.t_eat, p->d);
 	drop_forks(p);
+	if (p->d->cf.must_eat >= 0 && p->eat_count >= p->d->cf.must_eat)
+		return (1);
 	return (0);
 }
 
 void	*life(void *arg)
 {
 	t_philo	*p;
+	long	wait_st;
 
 	p = (t_philo *)arg;
-	while (!p->data->start_ts || now_ms() < p->data->start_ts)
-		usleep(10);
-	while (!check_stop(p->data))
+	while (1)
 	{
-		if (p->data->must_eat >= 0 && p->eat_count >= p->data->must_eat)
+		pthread_mutex_lock(&p->d->stop_mtx);
+		wait_st = p->d->start_ts;
+		pthread_mutex_unlock(&p->d->stop_mtx);
+		if (wait_st && now_ms() >= wait_st)
 			break ;
+		usleep(100);
+	}
+	if (p->id % 2 == 0)
+		usleep(p->d->cf.t_eat * 0.8);
+	while (!check_stop(p->d))
+	{
 		put_state(p, "is thinking");
 		if (philo_eat(p))
 			break ;
 		put_state(p, "is sleeping");
-		msleep(p->data->t_sleep, p->data);
+		msleep(p->d->cf.t_sleep, p->d);
 	}
 	return (NULL);
 }

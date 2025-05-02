@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 00:03:42 by teando            #+#    #+#             */
-/*   Updated: 2025/05/01 14:49:09 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 07:45:25 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,16 @@ static inline void	set_start_ts(t_data *d)
 {
 	long	i;
 
-	d->start_ts = now_ms() + 100;
+	pthread_mutex_lock(&d->stop_mtx);
+	d->start_ts = now_ms() + 1000;
 	i = -1;
-	while (++i < d->n_philo)
+	while (++i < d->cf.n_philo)
+	{
+		pthread_mutex_lock(&d->philos[i].meal_mtx);
 		d->philos[i].last_meal = d->start_ts;
+		pthread_mutex_unlock(&d->philos[i].meal_mtx);
+	}
+	pthread_mutex_unlock(&d->stop_mtx);
 }
 
 static inline long	start_sim(t_data *d)
@@ -29,7 +35,7 @@ static inline long	start_sim(t_data *d)
 
 	d->start_ts = 0;
 	i = -1;
-	while (++i < d->n_philo)
+	while (++i < d->cf.n_philo)
 	{
 		if (pthread_create(&d->philos[i].th, NULL, life, &d->philos[i]))
 			return (puterr_ret("Failed to create Philosopher thread"));
@@ -49,7 +55,7 @@ int	main(int ac, char **av)
 
 	if (ac < 5 || ac > 6)
 		return (usage());
-	if (parse_args(&d, ac, av))
+	if (parse_args(&d.cf, ac, av))
 		return (puterr_ret("Bad arguments"));
 	if (init_data(&d))
 	{
