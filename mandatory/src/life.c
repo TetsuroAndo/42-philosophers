@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:49:40 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 08:43:44 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 09:23:11 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	*life(void *arg)
 	p = (t_philo *)arg;
 	start_wait(p->d);
 	if (p->d->cf.n_philo % 2 == 1)
-		usleep((p->id - 1) / 2 * p->d->cf.t_eat);
+		usleep((p->id - 1) * p->d->cf.t_eat / 2);
 	else if (p->id % 2 == 0)
 		usleep(p->d->cf.t_eat * 0.8);
 	while (!check_stop(p->d))

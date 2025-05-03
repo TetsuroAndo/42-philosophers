@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 14:51:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 08:50:53 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 09:23:18 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	life(t_ctx *c, t_philo *self)
 	give_guardian(c, self);
 	while (now_ms() < c->start_ts)
 		usleep(100);
-	usleep((self->id - 1) / 2 * c->cf.t_eat);
+	usleep((self->id - 1) * c->cf.t_eat / 2);
 	while (1)
 	{
 		put_state(c, self->id, "is thinking");
