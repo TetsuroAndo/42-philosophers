@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:42:27 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 08:49:03 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 19:43:19 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ long	now_ms(void)
 {
 	struct timeval	t;
 
+	t = (struct timeval){0};
 	gettimeofday(&t, NULL);
 	return (t.tv_sec * 1000L + t.tv_usec / 1000);
 }
