@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 00:03:42 by teando            #+#    #+#             */
-/*   Updated: 2025/05/02 10:12:18 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 09:02:27 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,9 @@ static inline void	born(t_ctx *gc, long id)
 	lc.sem.forks_sem = sem_open(gc->sem.fn, 0);
 	lc.sem.print_sem = sem_open(gc->sem.pn, 0);
 	lc.sem.dining_sem = sem_open(gc->sem.dn, 0);
-	if (lc.sem.forks_sem == SEM_FAILED || lc.sem.print_sem == SEM_FAILED)
+	lc.sem.meal_sem = sem_open(gc->sem.mn, 0);
+	if (lc.sem.forks_sem == SEM_FAILED || lc.sem.print_sem == SEM_FAILED
+		|| lc.sem.dining_sem == SEM_FAILED || lc.sem.meal_sem == SEM_FAILED)
 		puterr_exit("child sem_open");
 	life(&lc, &lp);
 }
