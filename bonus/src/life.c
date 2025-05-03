@@ -71,7 +71,6 @@ static inline void	give_guardian(t_ctx *c, t_philo *self)
 	pthread_detach(th);
 }
 
-
 void	life(t_ctx *c, t_philo *self)
 {
 	if (c->cf.n_philo == 1)

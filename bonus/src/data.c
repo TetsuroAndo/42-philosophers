@@ -54,7 +54,8 @@ int	parse_args(t_cfg *cf, int ac, char **av)
 		if (cf->must_eat < 0)
 			return (1);
 	}
-	if (cf->n_philo <= 0 || cf->t_die <= 0 || cf->t_eat <= 0 || cf->t_sleep <= 0)
+	if (cf->n_philo <= 0 || cf->t_die <= 0 || cf->t_eat <= 0
+		|| cf->t_sleep <= 0)
 		return (1);
 	if (cf->n_philo > INT_MAX || cf->t_die > INT_MAX || cf->t_eat > INT_MAX
 		|| cf->t_sleep > INT_MAX || cf->must_eat > INT_MAX)
