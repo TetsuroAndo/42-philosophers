@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:46:34 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 08:43:30 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 20:16:34 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ void	*observer(void *arg)
 
 	d = (t_data *)arg;
 	start_wait(d);
-	pthread_mutex_unlock(&d->stop_mtx);
 	while (!check_stop(d))
 	{
 		if (watch_dead(d))

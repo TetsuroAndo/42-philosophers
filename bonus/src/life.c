@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 14:51:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 09:23:18 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/03 20:10:44 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,23 +59,18 @@ static inline void	eat(t_ctx *c, t_philo *self)
 		exit(0);
 }
 
-static inline void	give_guardian(t_ctx *c, t_philo *self)
+void	life(t_ctx *c, t_philo *self)
 {
 	t_obs_arg	arg;
 	pthread_t	th;
 
+	if (c->cf.n_philo == 1)
+		ph_one(c, self);
 	arg.c = c;
 	arg.self = self;
 	if (pthread_create(&th, NULL, ph_guardian, &arg))
 		puterr_exit("pthread_create");
 	pthread_detach(th);
-}
-
-void	life(t_ctx *c, t_philo *self)
-{
-	if (c->cf.n_philo == 1)
-		ph_one(c, self);
-	give_guardian(c, self);
 	while (now_ms() < c->start_ts)
 		usleep(100);
 	usleep((self->id - 1) * c->cf.t_eat / 2);
