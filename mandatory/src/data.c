@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:43:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 07:37:56 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/05 00:40:52 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,11 @@ static int	create_philos(t_philo **philos, t_data *d)
 	i = -1;
 	while (++i < d->cf.n_philo)
 	{
+		(*philos)[i].d = d;
 		(*philos)[i].id = i + 1;
 		(*philos)[i].last_meal = 0;
 		(*philos)[i].eat_count = 0;
+		(*philos)[i].state = 0;
 		if (pthread_mutex_init(&(*philos)[i].meal_mtx, NULL) == -1)
 		{
 			while (--i >= 0)
@@ -81,10 +83,8 @@ static int	create_philos(t_philo **philos, t_data *d)
 		}
 		(*philos)[i].fork_l = &d->forks[i];
 		if (d->cf.n_philo == 1)
-			(*philos)[i].fork_r = NULL;
-		else
-			(*philos)[i].fork_r = &d->forks[(i + 1) % d->cf.n_philo];
-		(*philos)[i].d = d;
+			return((*philos)[i].fork_r = NULL, 0);
+		(*philos)[i].fork_r = &d->forks[(i + 1) % d->cf.n_philo];
 	}
 	return (0);
 }

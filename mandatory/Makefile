@@ -6,15 +6,14 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/07 19:56:42 by teando            #+#    #+#              #
-#    Updated: 2025/05/03 20:15:20 by teando           ###   ########.fr        #
+#    Updated: 2025/05/05 00:12:49 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME        := philo
 NAME_BONUS  := philo_bonus
 CC          := cc
-#CFLAGS      := -Wall -Wextra -Werror -O3 -march=native -funroll-loops
-CFLAGS      := -Wall -Wextra -Werror -O1 -fsanitize=thread -fPIE -g
+CFLAGS      := -Wall -Wextra -Werror -O3 -march=native -funroll-loops
 RM          := rm -rf
 ROOT_DIR    := .
 OUT_DIR     := $(ROOT_DIR)/obj

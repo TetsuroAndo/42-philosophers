@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:49:40 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 09:23:11 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/05 00:55:30 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,10 @@ static inline int	take_forks(t_philo *p)
 	pthread_mutex_lock(first);
 	put_state(p, "has taken a fork");
 	if (p->d->cf.n_philo == 1)
+	{
+		pthread_mutex_unlock(first);
 		return (1);
+	}
 	pthread_mutex_lock(second);
 	put_state(p, "has taken a fork");
 	return (0);
@@ -54,7 +57,12 @@ static inline int	philo_eat(t_philo *p)
 	pthread_mutex_unlock(p->fork_l);
 	pthread_mutex_unlock(p->fork_r);
 	if (p->d->cf.must_eat >= 0 && p->eat_count >= p->d->cf.must_eat)
+	{
+		pthread_mutex_lock(&p->meal_mtx);
+		p->state = 1;
+		pthread_mutex_unlock(&p->meal_mtx);
 		return (1);
+	}
 	return (0);
 }
 
@@ -64,17 +72,18 @@ void	*life(void *arg)
 
 	p = (t_philo *)arg;
 	start_wait(p->d);
+	put_state(p, "is thinking");
 	if (p->d->cf.n_philo % 2 == 1)
-		usleep((p->id - 1) * p->d->cf.t_eat / 2);
+		usleep((p->id - 1) * p->d->cf.t_eat);
 	else if (p->id % 2 == 0)
-		usleep(p->d->cf.t_eat * 0.8);
+		usleep(p->d->cf.t_eat * 1);
 	while (!check_stop(p->d))
 	{
-		put_state(p, "is thinking");
 		if (philo_eat(p))
 			break ;
 		put_state(p, "is sleeping");
 		msleep(p->d->cf.t_sleep, p->d);
+		put_state(p, "is thinking");
 	}
 	return (NULL);
 }

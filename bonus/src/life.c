@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 14:51:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 20:10:44 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/05 00:14:06 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	life(t_ctx *c, t_philo *self)
 	pthread_detach(th);
 	while (now_ms() < c->start_ts)
 		usleep(100);
-	usleep((self->id - 1) * c->cf.t_eat / 2);
+	usleep((self->id - 1) * c->cf.t_eat);
 	while (1)
 	{
 		put_state(c, self->id, "is thinking");

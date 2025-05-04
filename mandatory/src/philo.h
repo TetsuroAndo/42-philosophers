@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 22:53:35 by teando            #+#    #+#             */
-/*   Updated: 2025/05/03 08:43:24 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/05 00:40:48 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_philo
 	int					id;
 	long				last_meal;
 	long				eat_count;
+	int					state;
 	pthread_mutex_t		meal_mtx;
 	pthread_mutex_t		*fork_l;
 	pthread_mutex_t		*fork_r;
