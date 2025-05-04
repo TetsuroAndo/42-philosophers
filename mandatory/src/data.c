@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:43:26 by teando            #+#    #+#             */
-/*   Updated: 2025/05/05 00:40:52 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/05 01:41:51 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,15 +60,12 @@ int	parse_args(t_cfg *c, int ac, char **av)
 	return (0);
 }
 
-static int	create_philos(t_philo **philos, t_data *d)
+static int	create_philos(t_philo **philos, t_data *d, long i)
 {
-	long	i;
-
 	*philos = malloc(sizeof(t_philo) * d->cf.n_philo);
 	if (!*philos)
 		return (1);
-	i = -1;
-	while (++i < d->cf.n_philo)
+	while (--i >= 0)
 	{
 		(*philos)[i].d = d;
 		(*philos)[i].id = i + 1;
@@ -83,8 +80,9 @@ static int	create_philos(t_philo **philos, t_data *d)
 		}
 		(*philos)[i].fork_l = &d->forks[i];
 		if (d->cf.n_philo == 1)
-			return((*philos)[i].fork_r = NULL, 0);
-		(*philos)[i].fork_r = &d->forks[(i + 1) % d->cf.n_philo];
+			(*philos)[i].fork_r = NULL;
+		else
+			(*philos)[i].fork_r = &d->forks[(i + 1) % d->cf.n_philo];
 	}
 	return (0);
 }
@@ -113,7 +111,7 @@ int	init_data(t_data *d)
 			return (free(d->forks), 1);
 		}
 	}
-	if (create_philos(&d->philos, d))
+	if (create_philos(&d->philos, d, i))
 		return (free(d->forks), 1);
 	return (0);
 }

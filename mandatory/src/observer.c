@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:46:34 by teando            #+#    #+#             */
-/*   Updated: 2025/05/05 00:49:22 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/05 01:41:04 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static inline int	watch_alive(t_data *d)
 {
 	long	i;
 	long	cnt;
-	
+
 	i = -1;
 	cnt = 0;
 	while (++i < d->cf.n_philo)

@@ -6,36 +6,34 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/07 19:56:42 by teando            #+#    #+#              #
-#    Updated: 2025/05/05 00:12:49 by teando           ###   ########.fr        #
+#    Updated: 2025/05/05 01:46:25 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME        := philo
-NAME_BONUS  := philo_bonus
-CC          := cc
-CFLAGS      := -Wall -Wextra -Werror -O3 -march=native -funroll-loops
-RM          := rm -rf
-ROOT_DIR    := .
-OUT_DIR     := $(ROOT_DIR)/obj
-INCS_DIR    := $(ROOT_DIR)/src
-IDFLAGS     := -I$(INCS_DIR)
+NAME		:= philo
+CC 			:= cc
+CFLAGS		:= -Wall -Wextra -Werror -O3 -march=native -funroll-loops
+RM			:= rm -rf
+ROOT_DIR	:= .
+OUT_DIR		:= $(ROOT_DIR)/obj
+INCS_DIR	:= $(ROOT_DIR)
+IDFLAGS		:= -I$(INCS_DIR)
 
-SRCS        := $(shell find . -name "*.c" -not -name "*_bonus.c")
-SRCS_BONUS  := $(shell find . -name "*_bonus.c")
-OBJS        := $(addprefix $(OUT_DIR)/, $(SRCS:.c=.o))
-OBJS_BONUS  := $(addprefix $(OUT_DIR)/, $(SRCS_BONUS:.c=.o))
-DEPS        := $(OBJS:.o=.d)
-DEPS_BONUS  := $(OBJS_BONUS:.o=.d)
+SRCS		:= $(addprefix $(ROOT_DIR)/, \
+			data.c \
+			err.c \
+			life.c \
+			main.c \
+			misc.c \
+			observer.c \
+			)
+OBJS		:= $(addprefix $(OUT_DIR)/, $(SRCS:.c=.o))
+DEPS		:= $(OBJS:.o=.d)
 
 all: $(NAME)
 
-bonus: $(NAME_BONUS)
-
 $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) -pthread $(OBJS) -o $@
-
-$(NAME_BONUS): $(OBJS_BONUS)
-	$(CC) $(CFLAGS) -pthread $(OBJS_BONUS) -o $@
 
 $(OUT_DIR)/%.o: $(ROOT_DIR)/%.c
 	@mkdir -p $(@D)
@@ -45,7 +43,7 @@ clean:
 	$(RM) $(OUT_DIR)
 
 fclean: clean
-	$(RM) $(NAME) $(NAME_BONUS)
+	$(RM) $(NAME)
 
 re: fclean all
 
