@@ -6,7 +6,7 @@
 #    By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/07 19:56:42 by teando            #+#    #+#              #
-#    Updated: 2025/05/05 01:46:17 by teando           ###   ########.fr        #
+#    Updated: 2025/05/05 10:54:47 by teando           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ OUT_DIR		:= $(ROOT_DIR)/obj
 INCS_DIR	:= $(ROOT_DIR)
 IDFLAGS		:= -I$(INCS_DIR)
 
-SRCS		:= $(addprefix $(ROOT_DIR)/, \
+SRCS		:= $(addprefix $(ROOT_DIR)/src/, \
 			data.c \
 			err.c \
 			life.c \
