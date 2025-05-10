@@ -6,7 +6,7 @@
 /*   By: teando <teando@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 02:49:40 by teando            #+#    #+#             */
-/*   Updated: 2025/05/05 00:55:30 by teando           ###   ########.fr       */
+/*   Updated: 2025/05/10 22:09:52 by teando           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,20 @@ static inline int	philo_eat(t_philo *p)
 	return (0);
 }
 
+static inline void	philo_think(t_philo *p)
+{
+	long	ts;
+	long	time_to_wait;
+
+	ts = now_ms();
+	pthread_mutex_lock(&p->meal_mtx);
+	ts -= p->last_meal;
+	pthread_mutex_unlock(&p->meal_mtx);
+	time_to_wait = (p->d->cf.t_die - ts) - 10;
+	if (time_to_wait > 0)
+		msleep(time_to_wait, p->d);
+}
+
 void	*life(void *arg)
 {
 	t_philo	*p;
@@ -74,7 +88,7 @@ void	*life(void *arg)
 	start_wait(p->d);
 	put_state(p, "is thinking");
 	if (p->d->cf.n_philo % 2 == 1)
-		usleep((p->id - 1) * p->d->cf.t_eat);
+		usleep((p->id - 1) * 100 + p->d->cf.t_eat / 2);
 	else if (p->id % 2 == 0)
 		usleep(p->d->cf.t_eat * 1);
 	while (!check_stop(p->d))
@@ -84,6 +98,7 @@ void	*life(void *arg)
 		put_state(p, "is sleeping");
 		msleep(p->d->cf.t_sleep, p->d);
 		put_state(p, "is thinking");
+		philo_think(p);
 	}
 	return (NULL);
 }
